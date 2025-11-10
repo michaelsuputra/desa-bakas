@@ -7,14 +7,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { guestHouses } from '@/lib/mockdata';
+import { ArrowDown } from 'lucide-react';
+
+import Navbar from '@/components/custom/navbar';
+import { Input } from '@/components/ui/input';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredHouses, setFilteredHouses] = useState(guestHouses);
-  const [scrolled, setScrolled] = useState(false);
-  const router = useRouter();
 
-  // Search filter
   useEffect(() => {
     const filtered = guestHouses.filter(
       (house) =>
@@ -24,42 +25,20 @@ export default function Home() {
     setFilteredHouses(filtered);
   }, [searchQuery]);
 
-  // Scroll effect
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 100);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Smooth scroll
-  const scrollToContent = () => {
-    const content = document.getElementById('content');
-    if (content) content.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
-    <div className={`min-h-screen`}>
-      {/* ✅ HERO */}
+    <div className="min-h-screen bg-white">
+      <Navbar />
+
+      {/* HERO */}
       <section
         className="relative h-screen rounded-br-[250px] bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/sawah_bakas.png')" }}>
-        {/* Navbar */}
-        <nav
-          className={`fixed top-0 z-50 flex w-full items-center justify-between px-6 py-6 transition-all md:px-14 ${scrolled ? 'bg-white/20 shadow-lg backdrop-blur-md' : 'bg-transparent'}`}>
-          <Link
-            href="/"
-            className="font-serif text-2xl font-light tracking-[3px] text-white md:text-3xl">
-            Bakas
-          </Link>
-          <div className="text-sm tracking-widest text-white">Guest House</div>
-        </nav>
-
         {/* Hero Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center text-white">
-          <h1 className="font-serif text-[60px] font-light tracking-[20px] md:text-[150px]">
+          <h1 className="font-serif text-6xl font-bold tracking-widest md:text-[150px]">
             BAKAS
           </h1>
-          <p className="-mt-1 max-w-xl text-sm leading-relaxed opacity-90 md:-mt-10">
+          <p className="max-w-xl text-center font-sans text-sm leading-relaxed text-white">
             Bakas Village is one of 13 villages located in the Banjarangkan
             District, Klungkung Regency, Bali Province. Geographically, Bakas
             Village has the following boundaries: To the north, it borders
@@ -70,38 +49,37 @@ export default function Home() {
         </div>
 
         {/* Scroll Indicator */}
-        <div
-          onClick={scrollToContent}
-          className="absolute bottom-20 left-10 animate-bounce cursor-pointer text-4xl text-white">
-          ↓
-        </div>
+        <Link
+          href="#content"
+          className="absolute bottom-20 left-10 animate-bounce cursor-pointer text-white">
+          <ArrowDown />
+        </Link>
       </section>
 
-      {/* ✅ CONTENT */}
       <main
         id="content"
         className="mx-auto max-w-7xl space-y-6 rounded-3xl bg-white px-6 pt-12 md:px-10">
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-6">
-          <h2 className="font-serif text-2xl font-bold text-orange-500 md:text-3xl">
+          <h2 className="text-primary font-serif text-2xl font-bold md:text-3xl">
             Available Guest House
           </h2>
 
-          <input
+          <Input
             type="text"
             placeholder="search location"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 outline-none focus:ring-2 focus:ring-orange-300 md:w-80"
+            className="w-full rounded-lg px-4 py-3 md:w-80"
           />
         </div>
 
         {/* ✅ GRID */}
         <div className="grid gap-12 md:grid-cols-2">
           {filteredHouses.map((house) => (
-            <div
+            <Link
+              href={`/guesthouse/${house.id}`}
               key={house.id}
-              onClick={() => router.push(`/guesthouse/${house.id}`)}
               className="cursor-pointer overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg transition-all hover:shadow-2xl">
               <div className="h-72 overflow-hidden">
                 <Image
@@ -114,12 +92,12 @@ export default function Home() {
               </div>
 
               <div className="p-8">
-                <h3 className="mb-3 font-serif text-xl">{house.name}</h3>
-                <p className="line-clamp-4 text-sm leading-relaxed text-gray-600">
+                <h3 className="mb-3 text-xl font-semibold">{house.name}</h3>
+                <p className="text-card-foreground line-clamp-4 text-sm leading-relaxed">
                   {house.location}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </main>
