@@ -58,7 +58,8 @@ export default function Home() {
 
       <main
         id="content"
-        className="container space-y-6 py-12">
+        className="mx-auto max-w-7xl space-y-6 rounded-3xl bg-white px-6 pt-12 md:px-10">
+        {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-6">
           <h2 className="text-primary font-serif text-2xl font-bold md:text-3xl">
             Available Guest House
