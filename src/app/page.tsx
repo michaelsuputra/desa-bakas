@@ -31,7 +31,7 @@ export default function Home() {
 
       {/* HERO */}
       <section
-        className="relative h-screen rounded-br-[250px] bg-cover bg-center bg-no-repeat"
+        className="relative h-screen rounded-br-[250px] border-b bg-cover bg-center bg-no-repeat shadow-2xl"
         style={{ backgroundImage: "url('/sawah_bakas.png')" }}>
         {/* Hero Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center text-white">
@@ -58,7 +58,7 @@ export default function Home() {
 
       <main
         id="content"
-        className="container space-y-6 py-12">
+        className="container space-y-6 py-24">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <h2 className="text-primary font-serif text-2xl font-bold md:text-3xl">
             Available Guest House

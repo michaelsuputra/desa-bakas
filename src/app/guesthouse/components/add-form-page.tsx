@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
 
+import { bookGuestHouse } from '../lib/action';
+
 export default function AddFormPage() {
   const [dateOfStay, setDateOfStay] = useState<Date>();
   const [untilTheDate, setUntilTheDate] = useState<Date>();
@@ -26,7 +28,9 @@ export default function AddFormPage() {
         Please fill in your personal details
       </h1>
 
-      <form className="grid grid-cols-2 gap-6">
+      <form
+        action={bookGuestHouse}
+        className="grid grid-cols-2 gap-6">
         <div className="flex flex-col gap-6">
           <div className="grid w-full items-center gap-3">
             <Label htmlFor="fullname">Fullname</Label>
@@ -82,12 +86,18 @@ export default function AddFormPage() {
             <div className="grid w-full items-center gap-3">
               <Label htmlFor="date_of_stay">Date of Stay</Label>
 
+              <input
+                type="hidden"
+                name="date_of_stay"
+                value={dateOfStay ? format(dateOfStay, 'PPP') : ''}
+              />
+
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     data-empty={!dateOfStay}
-                    className="data-[empty=true]:text-muted-foreground justify-start text-left font-normal">
+                    className="data-[empty=true]:text-muted-foreground max-w-full justify-start text-left font-normal">
                     <CalendarIcon />
                     {dateOfStay ? (
                       format(dateOfStay, 'PPP')
@@ -109,6 +119,12 @@ export default function AddFormPage() {
             <div className="grid w-full items-center gap-3">
               <Label htmlFor="until_the_date">Until the Date</Label>
 
+              <input
+                type="hidden"
+                name="until_the_date"
+                value={untilTheDate ? format(untilTheDate, 'PPP') : ''}
+              />
+
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -123,7 +139,7 @@ export default function AddFormPage() {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="p-0">
                   <Calendar
                     mode="single"
                     selected={untilTheDate}
@@ -145,10 +161,10 @@ export default function AddFormPage() {
         </div>
 
         <div className="col-span-2 grid w-full items-center gap-3">
-          <Label htmlFor="share_your_impression">Share your impression</Label>
+          <Label htmlFor="impression">Share your impression</Label>
           <Textarea
-            id="share_your_impression"
-            name="share_your_impression"
+            id="impression"
+            name="impression"
             placeholder="Enter your Share your impression"
             className="h-[100px]"
           />

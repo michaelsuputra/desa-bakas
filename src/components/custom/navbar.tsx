@@ -19,7 +19,7 @@ export default function Navbar() {
         className={`container flex w-full items-center justify-between py-6`}>
         <Link
           href="/"
-          className="font-serif text-2xl font-light tracking-wider text-white md:text-3xl">
+          className="font-serif text-2xl font-light tracking-wider text-white text-shadow-2xs md:text-3xl">
           Bakas
         </Link>
 

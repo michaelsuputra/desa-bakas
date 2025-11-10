@@ -37,8 +37,10 @@ export default function Page() {
         </div>
       </nav>
 
-      <div className="container pb-8">
-        <h1 className="mb-5 font-serif text-3xl">{house.name}</h1>
+      <div className="container space-y-6">
+        <h1 className="font-serif text-3xl">{house.name}</h1>
+
+        <hr className="" />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="h-[420px] overflow-hidden rounded-xl md:col-span-2">
