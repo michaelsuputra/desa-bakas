@@ -1,63 +1,119 @@
+'use client'
+
+import { guestHouses } from "@/lib/mockdata";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 
 export default function Home() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredHouses, setFilteredHouses] = useState(guestHouses);
+  const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
+
+  // Search filter
+  useEffect(() => {
+    const filtered = guestHouses.filter(house =>
+      house.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      house.location.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredHouses(filtered);
+  }, [searchQuery]);
+
+  // Scroll effect
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 100);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Smooth scroll
+  const scrollToContent = () => {
+    const content = document.getElementById("content");
+    if (content) content.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file
+    <div className={`min-h-screen`}>
+
+      {/* ✅ HERO */}
+      <section className="relative h-screen bg-cover bg-center bg-no-repeat rounded-br-[250px]"
+        style={{ backgroundImage: "url('/sawah_bakas.png')" }}
+      >
+        {/* Navbar */}
+        <nav
+          className={`fixed top-0 w-full flex justify-between items-center px-6 md:px-14 py-6 z-50 transition-all 
+              ${scrolled ? "bg-white/20 backdrop-blur-md shadow-lg" : "bg-transparent"}`}
+        >
+          <Link href='/' className="text-white text-2xl md:text-3xl font-light tracking-[3px] font-serif">Bakas</Link>
+          <div className="text-white text-sm tracking-widest">Guest House</div>
+        </nav>
+
+        {/* Hero Content */}
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-8">
+          <h1 className="font-serif text-[60px] md:text-[150px] tracking-[20px] font-light">
+            BAKAS
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="max-w-xl text-sm opacity-90 leading-relaxed -mt-1 md:-mt-10">
+            Bakas Village is one of 13 villages located in the Banjarangkan District, Klungkung Regency, Bali Province.  Geographically, Bakas Village has the following boundaries: To the north, it borders Nyalian Village.
+            To the east, it borders Tukad Bubuh, which is part of the Klungkung District.
+            South: borders Tusan Village. West: borders Tukad Melangit, still within the Banjarangkan Subdistrict.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Scroll Indicator */}
+        <div
+          onClick={scrollToContent}
+          className="absolute bottom-20 left-10 text-white text-4xl cursor-pointer animate-bounce"
+        >
+          ↓
+        </div>
+      </section>
+
+      {/* ✅ CONTENT */}
+      <main id="content" className="max-w-7xl space-y-6 pt-12 mx-auto px-6 md:px-10 bg-white rounded-3xl">
+
+        {/* Header */}
+        <div className="flex flex-wrap justify-between items-center gap-6 ">
+          <h2 className="text-2xl md:text-3xl font-bold text-orange-500 font-serif">Available Guest House</h2>
+
+          <input
+            type="text"
+            placeholder="search location"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border border-gray-300 px-4 py-3 rounded-lg w-full md:w-80 bg-gray-50 focus:ring-2 focus:ring-orange-300 outline-none"
+          />
+        </div>
+
+        {/* ✅ GRID */}
+        <div className="grid md:grid-cols-2 gap-12">
+          {filteredHouses.map((house) => (
+            <div
+              key={house.id}
+              onClick={() => router.push(`/guesthouse/${house.id}`)}
+              className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer border border-gray-100"
+            >
+              <div className="h-72 overflow-hidden">
+                <Image
+                  src={house.mainImage}
+                  alt={house.name}
+                  width={600}
+                  height={400}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+
+              <div className="p-8">
+                <h3 className="font-serif text-xl mb-3">{house.name}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed line-clamp-4">
+                  {house.location}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </main>
     </div>
