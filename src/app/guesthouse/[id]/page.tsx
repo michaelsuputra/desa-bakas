@@ -40,7 +40,7 @@ export default function Page() {
       <div className="container space-y-6">
         <h1 className="font-serif text-3xl">{house.name}</h1>
 
-        <hr className="" />
+        <hr />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="h-[420px] overflow-hidden rounded-xl md:col-span-2">
@@ -70,8 +70,8 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-8 gap-4">
-          <div className="col-span-5 space-y-2">
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-8">
+          <div className="space-y-2 md:col-span-5">
             <h2 className="text-muted-foreground text-[13px]">
               <span className="text-primary font-semibold tracking-wide">
                 PROPERTY LOCATION
@@ -82,7 +82,7 @@ export default function Page() {
             <p>{house.location}</p>
           </div>
 
-          <div className="col-span-3 w-full space-y-4">
+          <div className="w-full space-y-4 md:col-span-3">
             <div className="space-y-2">
               <h3 className="font-semibold">FACILITIES</h3>
 
@@ -116,7 +116,7 @@ export default function Page() {
         </div>
       </div>
 
-      <AddFormPage />
+      <AddFormPage guesthouseName={house.name} />
     </section>
   );
 }

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Merriweather, Montserrat, Ubuntu_Mono } from 'next/font/google';
 
+import { Toaster } from '@/components/ui/sonner';
+
 import './globals.css';
 
 const montserratSans = Montserrat({
@@ -34,6 +36,7 @@ export default function RootLayout({
       <body
         className={`${montserratSans.variable} ${merriweatherSerif.variable} ${ubuntuMono.variable} font-sans antialiased`}>
         {children}
+        <Toaster />
       </body>
     </html>
   );

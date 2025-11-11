@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model account {
+  id                String  @id @default(cuid())
+  user_id           String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user user @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model user {
+  user_id  String  @id @default(cuid())
+  email    String? @unique
+  password String?
+
+  accounts account[]
+}
+
+model kuisioner_guesthouse {
+  kuisioner_id     String    @id @default(cuid())
+  guesthouse_name  String
+  fullname         String
+  age              Int?
+  number_of_people Int?
+  contact          String?
+  country          String?
+  country_flag     String?
+  date_of_stay     DateTime?
+  date_of_checkout DateTime?
+  passport         String?
+  impression       String?
+  booking_at       String?
+}
