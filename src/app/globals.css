@@ -230,3 +230,12 @@ html {
   padding-inline: 2rem;
   @apply 2xl:max-w-[1400px];
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
