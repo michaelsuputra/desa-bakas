@@ -47,6 +47,18 @@ export default function AddFormPage({
     fetchCountriesData();
   }, []);
 
+  const handleUploadPassport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      if (file.size > 1 * 1024 * 1024) {
+        toast.error('Ukuran file melebihi batas maksimum 1MB.');
+        e.target.value = '';
+        return;
+      }
+    }
+  };
+
   async function clientAction(formData: FormData) {
     const result = await bookGuestHouse(formData);
 
@@ -195,7 +207,7 @@ export default function AddFormPage({
               </div>
 
               <div className="grid w-full items-center gap-3">
-                <Label htmlFor="date_of_checkout">Until the Date</Label>
+                <Label htmlFor="date_of_checkout">Date of Checkout</Label>
 
                 <input
                   type="hidden"
@@ -240,12 +252,17 @@ export default function AddFormPage({
             </div>
 
             <div className="grid w-full items-center gap-3">
-              <Label htmlFor="passport">Passport</Label>
+              <Label htmlFor="passport">
+                Passport{' '}
+                <span className="text-muted-foreground text-xs">(max 1MB)</span>
+              </Label>
               <Input
                 id="passport"
                 name="passport"
                 type="file"
                 accept=".jpg, .png, .jpeg"
+                onChange={handleUploadPassport}
+                required
               />
             </div>
           </div>

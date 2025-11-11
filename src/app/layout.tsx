@@ -36,7 +36,7 @@ export default function RootLayout({
       <body
         className={`${montserratSans.variable} ${merriweatherSerif.variable} ${ubuntuMono.variable} font-sans antialiased`}>
         {children}
-        <Toaster />
+        <Toaster richColors />
       </body>
     </html>
   );
