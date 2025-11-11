@@ -29,7 +29,9 @@ export function NavSecondary({
               <SidebarMenuButton
                 asChild
                 size="default">
-                <a href={item.url}>
+                <a
+                  href={item.url}
+                  target="_blank">
                   <item.icon />
                   <span>{item.title}</span>
                 </a>

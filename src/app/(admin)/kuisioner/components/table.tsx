@@ -1,9 +1,11 @@
 import Image from 'next/image';
 
 import { format } from 'date-fns';
+import { House } from 'lucide-react';
 
 import SmartInput from '@/components/custom/smart-input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom';
 import {
   Table,
   TableBody,
@@ -28,7 +30,7 @@ export default async function DataTable({ searchParams }: PageProps) {
   const { search, page, booking, country } = await searchParams;
 
   const { data, totalCount } = await getKuisioner(
-    Number(page),
+    Number(page) || 1,
     10,
     search,
     booking,
@@ -114,18 +116,22 @@ export default async function DataTable({ searchParams }: PageProps) {
                 </TableCell>
                 <TableCell>{kuisioner.booking_at}</TableCell>
                 <TableCell>
-                  <div className="border-primary relative aspect-3/4 max-w-20 overflow-hidden border-2">
-                    <Image
-                      alt="Passport"
-                      src={kuisioner.passport || ''}
-                      sizes="80"
-                      className="object-cover"
-                      fill={true}
-                      priority={true}
-                    />
-                  </div>
+                  <ImageZoom zoomMargin={100}>
+                    <div className="border-primary relative aspect-3/4 max-w-20 overflow-hidden border-2">
+                      <Image
+                        alt="Passport"
+                        src={kuisioner.passport || ''}
+                        sizes="80"
+                        className="object-cover"
+                        fill={true}
+                        priority={true}
+                      />
+                    </div>
+                  </ImageZoom>
                 </TableCell>
-                <TableCell>{kuisioner.impression}</TableCell>
+                <TableCell className="max-w-[200px] text-pretty whitespace-normal">
+                  {kuisioner.impression}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
