@@ -5,12 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { compareSync } from 'bcrypt-ts';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  session: {
-    strategy: 'jwt',
-  },
-  pages: {
-    signIn: '/signin',
-  },
+  session: { strategy: 'jwt' },
   providers: [
     Credentials({
       credentials: {
@@ -46,9 +41,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized: ({ auth, request: { nextUrl } }) => {
+    authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const ProtectedRoutes = ['/dashboard'];
+      const ProtectedRoutes = ['/dashboard', '/kuisioner'];
 
       if (!isLoggedIn && ProtectedRoutes.includes(nextUrl.pathname)) {
         return Response.redirect(new URL('/signin', nextUrl));
@@ -60,13 +55,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return true;
     },
-    jwt: ({ token, user }) => {
+    jwt({ token, user }) {
       if (user) {
         token.fullname = user.fullname;
       }
       return token;
     },
-    session: ({ session, token }) => {
+    session({ session, token }) {
       session.user.id = token.sub;
       session.user.fullname = token.fullname;
       return session;

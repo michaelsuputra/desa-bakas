@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import { Session } from 'next-auth';
+
 import { House, Languages, PieChart, TreePine } from 'lucide-react';
 
 import { NavProjects } from '@/components/nav-project';
@@ -45,7 +47,10 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  session,
+  ...props
+}: { session: Session | null } & React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       variant="inset"
@@ -74,7 +79,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={session?.user} />
       </SidebarFooter>
     </Sidebar>
   );

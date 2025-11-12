@@ -1,3 +1,5 @@
+import { auth } from '@/auth';
+
 import { AppSidebar } from '@/components/app-sidebar';
 import {
   Breadcrumb,
@@ -14,8 +16,6 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 
-import { auth } from '../../auth';
-
 export default async function Page({
   children,
 }: {
@@ -23,11 +23,9 @@ export default async function Page({
 }) {
   const session = await auth();
 
-  console.log(session);
-
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar session={session} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4">
