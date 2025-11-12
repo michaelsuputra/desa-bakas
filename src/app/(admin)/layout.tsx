@@ -14,7 +14,17 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 
-export default function Page({ children }: { children: React.ReactNode }) {
+import { auth } from '../../../auth';
+
+export default async function Page({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await auth();
+
+  console.log(session);
+
   return (
     <SidebarProvider>
       <AppSidebar />
