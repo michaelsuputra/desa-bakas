@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { hashSync } from 'bcrypt-ts';
 
-import { signIn } from '../../../../auth';
+import { signIn } from '../../../auth';
 
 export async function signUpUser(formData: FormData) {
   try {

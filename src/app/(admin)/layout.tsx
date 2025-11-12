@@ -14,7 +14,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 
-import { auth } from '../../../auth';
+import { auth } from '../../auth';
 
 export default async function Page({
   children,
