@@ -38,7 +38,6 @@ model user {
 
 model kuisioner_guesthouse {
   kuisioner_id     String    @id @default(cuid())
-  guesthouse_name  String
   fullname         String
   age              Int?
   number_of_people Int?
@@ -48,6 +47,30 @@ model kuisioner_guesthouse {
   date_of_stay     DateTime?
   date_of_checkout DateTime?
   passport         String?
-  impression       String?
   booking_at       String?
+
+  guesthouse    guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  guesthouse_id String?
+}
+
+model guesthouse {
+  guesthouse_id          String   @id @default(cuid())
+  guesthouse_name        String
+  guesthouse_images      String[]
+  guesthouse_location    String
+  guesthouse_description String
+  guesthouse_map_url     String
+
+  kuisioner_guesthouse kuisioner_guesthouse[]
+  review_guesthouse    review_guesthouse[]
+}
+
+model review_guesthouse {
+  review_id    String  @id @default(cuid())
+  impression   String
+  rating       Int
+  review_image String?
+
+  guesthouse    guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  guesthouse_id String?
 }

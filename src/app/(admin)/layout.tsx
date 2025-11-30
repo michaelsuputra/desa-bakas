@@ -10,21 +10,13 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
-export default async function Page({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function Page({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
   return (
-    <SidebarProvider>
+    <SidebarProvider suppressHydrationWarning>
       <AppSidebar session={session} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
@@ -37,9 +29,7 @@ export default async function Page({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href="#">Building Your Application</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

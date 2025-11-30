@@ -8,6 +8,7 @@ export type PageProps = {
     page?: string;
     booking?: string;
     country?: string;
+    guesthouse?: string;
   }>;
 };
 
@@ -15,12 +16,8 @@ export default async function Page({ searchParams }: PageProps) {
   return (
     <section className="space-y-4">
       <header className="space-y-1">
-        <h1 className="text-primary font-serif text-3xl font-semibold">
-          Kuisioner
-        </h1>
-        <p className="text-muted-foreground font-mono text-sm">
-          Halaman untuk mengelola kuisioner
-        </p>
+        <h1 className="text-primary font-serif text-3xl font-semibold">Kuisioner</h1>
+        <p className="text-muted-foreground font-mono text-sm">Halaman untuk mengelola kuisioner</p>
       </header>
 
       <hr />

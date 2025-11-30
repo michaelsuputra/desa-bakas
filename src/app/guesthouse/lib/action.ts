@@ -11,7 +11,7 @@ cloudinary.config({
 
 export async function bookGuestHouse(formData: FormData) {
   try {
-    const guesthouse_name = formData.get('guesthouse_name') as string;
+    const guesthouseId = formData.get('guesthouse_id') as string;
     const fullname = formData.get('fullname') as string;
     const age = Number(formData.get('age'));
     const number_of_people = Number(formData.get('number_of_people'));
@@ -21,13 +21,10 @@ export async function bookGuestHouse(formData: FormData) {
     const date_of_stay = formData.get('date_of_stay') as string;
     const date_of_checkout = formData.get('date_of_checkout') as string;
     const booking_at = formData.get('booking_at') as string;
-    const impression = formData.get('impression') as string;
 
     const passportEntry = formData.get('passport') as File;
     const passportFile =
-      passportEntry instanceof File && passportEntry.size > 0
-        ? passportEntry
-        : null;
+      passportEntry instanceof File && passportEntry.size > 0 ? passportEntry : null;
 
     let passportUrl: string | null = null;
 
@@ -37,31 +34,29 @@ export async function bookGuestHouse(formData: FormData) {
       const bytes = await passportFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      const res: { secure_url: string } = await new Promise(
-        (resolve, reject) => {
-          const uploadStream = cloudinary.uploader.upload_stream(
-            {
-              folder: folderName,
-            },
-            (error, result) => {
-              if (error) return reject(error);
-              if (result && result.secure_url) {
-                resolve(result as { secure_url: string });
-              } else {
-                reject(new Error('Upload failed'));
-              }
+      const res: { secure_url: string } = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: folderName,
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            if (result && result.secure_url) {
+              resolve(result as { secure_url: string });
+            } else {
+              reject(new Error('Upload failed'));
             }
-          );
-          uploadStream.end(buffer);
-        }
-      );
+          }
+        );
+        uploadStream.end(buffer);
+      });
 
       passportUrl = res?.secure_url;
     }
 
     const data = await prisma.kuisioner_guesthouse.create({
       data: {
-        guesthouse_name,
+        guesthouse_id: guesthouseId,
         fullname,
         age,
         number_of_people,
@@ -72,7 +67,6 @@ export async function bookGuestHouse(formData: FormData) {
         date_of_checkout,
         passport: passportUrl,
         booking_at,
-        impression,
       },
     });
 

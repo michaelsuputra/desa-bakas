@@ -6,7 +6,8 @@ export async function getKuisioner(
   pageSize: number = 10,
   searchQuery?: string,
   bookingQuery?: string,
-  countryQuery?: string
+  countryQuery?: string,
+  guesthouseQuery?: string
 ) {
   const skip = (currentPage - 1) * pageSize;
 
@@ -15,7 +16,11 @@ export async function getKuisioner(
   if (searchQuery) {
     where.OR = [
       { fullname: { contains: searchQuery, mode: 'insensitive' } },
-      { guesthouse_name: { contains: searchQuery, mode: 'insensitive' } },
+      {
+        guesthouse: {
+          guesthouse_name: { contains: searchQuery, mode: 'insensitive' },
+        },
+      },
     ];
   }
 
@@ -27,11 +32,20 @@ export async function getKuisioner(
     where.country = { contains: countryQuery, mode: 'insensitive' };
   }
 
+  if (guesthouseQuery) {
+    where.guesthouse = {
+      guesthouse_name: { equals: guesthouseQuery, mode: 'insensitive' },
+    };
+  }
+
   const [data, totalCount] = await Promise.all([
     prisma.kuisioner_guesthouse.findMany({
       take: pageSize,
       skip,
       where,
+      include: {
+        guesthouse: true,
+      },
     }),
     prisma.kuisioner_guesthouse.count({ where }),
   ]);
@@ -43,6 +57,19 @@ export async function getKuisioner(
     totalCount,
     totalPages,
   };
+}
+
+export async function getGuesthousesList() {
+  const guesthouses = await prisma.guesthouse.findMany({
+    select: {
+      guesthouse_name: true,
+    },
+    orderBy: {
+      guesthouse_name: 'asc',
+    },
+  });
+
+  return guesthouses.map((gh) => gh.guesthouse_name);
 }
 
 export async function getUniqueBooking() {

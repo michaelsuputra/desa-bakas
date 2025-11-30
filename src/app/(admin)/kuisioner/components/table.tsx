@@ -1,7 +1,6 @@
 import Image from 'next/image';
 
 import { format } from 'date-fns';
-import { House } from 'lucide-react';
 
 import SmartInput from '@/components/custom/smart-input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -11,13 +10,13 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
 
 import {
+  getGuesthousesList,
   getKuisioner,
   getUniqueBooking,
   getUniqueCountry,
@@ -25,20 +24,25 @@ import {
 import { PageProps } from '../page';
 import SelectBooking from './select-booking';
 import SelectCountry from './select-country';
+import SelectGuesthouse from './select-guesthouse';
 
 export default async function DataTable({ searchParams }: PageProps) {
-  const { search, page, booking, country } = await searchParams;
+  const { search, page, booking, country, guesthouse } = await searchParams;
 
   const { data, totalCount } = await getKuisioner(
     Number(page) || 1,
     10,
     search,
     booking,
-    country
+    country,
+    guesthouse
   );
 
-  const uniqueBooking = await getUniqueBooking();
-  const uniqueCountry = await getUniqueCountry();
+  const [uniqueBooking, uniqueCountry, guesthousesList] = await Promise.all([
+    getUniqueBooking(),
+    getUniqueCountry(),
+    getGuesthousesList(),
+  ]);
 
   return (
     <div className="space-y-4">
@@ -46,6 +50,11 @@ export default async function DataTable({ searchParams }: PageProps) {
         <SmartInput
           placeholder="Search by guesthouse or fullname"
           query="search"
+        />
+
+        <SelectGuesthouse
+          guesthouses={guesthousesList}
+          currentGuesthouse={guesthouse}
         />
 
         <SelectBooking
@@ -58,12 +67,11 @@ export default async function DataTable({ searchParams }: PageProps) {
           currentCountry={country}
         />
       </div>
+
       <ScrollArea className="w-full whitespace-nowrap">
         <ScrollBar orientation="horizontal" />
         <Table className="min-w-full">
-          <TableCaption>
-            List of kuisioner responses ({totalCount})
-          </TableCaption>
+          <TableCaption>List of kuisioner responses ({totalCount})</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Guesthouse</TableHead>
@@ -76,13 +84,12 @@ export default async function DataTable({ searchParams }: PageProps) {
               <TableHead>Date of Checkout</TableHead>
               <TableHead>Booking at</TableHead>
               <TableHead>Passport</TableHead>
-              <TableHead>Impression</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((kuisioner) => (
               <TableRow key={kuisioner.kuisioner_id}>
-                <TableCell>{kuisioner.guesthouse_name}</TableCell>
+                <TableCell>{kuisioner.guesthouse?.guesthouse_name}</TableCell>
                 <TableCell>{kuisioner.fullname}</TableCell>
                 <TableCell>{kuisioner.age}</TableCell>
                 <TableCell>{kuisioner.number_of_people}</TableCell>
@@ -103,16 +110,10 @@ export default async function DataTable({ searchParams }: PageProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  {format(
-                    new Date(kuisioner.date_of_stay || 'null'),
-                    'dd MMM yyyy'
-                  )}
+                  {format(new Date(kuisioner.date_of_stay || 'null'), 'dd MMM yyyy')}
                 </TableCell>
                 <TableCell>
-                  {format(
-                    new Date(kuisioner.date_of_checkout || 'null'),
-                    'dd MMM yyyy'
-                  )}
+                  {format(new Date(kuisioner.date_of_checkout || 'null'), 'dd MMM yyyy')}
                 </TableCell>
                 <TableCell>{kuisioner.booking_at}</TableCell>
                 <TableCell>
@@ -129,18 +130,9 @@ export default async function DataTable({ searchParams }: PageProps) {
                     </div>
                   </ImageZoom>
                 </TableCell>
-                <TableCell className="max-w-[200px] text-pretty whitespace-normal">
-                  {kuisioner.impression}
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>
-          {/* <TableFooter>
-          <TableRow>
-            <TableCell colSpan={10}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-          </TableRow>
-        </TableFooter> */}
         </Table>
       </ScrollArea>
     </div>

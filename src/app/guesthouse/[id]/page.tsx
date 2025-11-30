@@ -1,23 +1,26 @@
-'use client';
-
-import React, { useState } from 'react';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
 
 import { guestHouses } from '@/lib/mockdata';
+import { prisma } from '@/lib/prisma';
 
 import AddFormPage from '../components/add-form-page';
 
-export default function Page() {
-  const { id } = useParams(); // ✅ App Router
-  const house = guestHouses.find((h) => h.id === Number(id));
+type Props = {
+  params: Promise<{ id: string }>;
+};
 
-  if (!house) {
-    return (
-      <p className="py-20 text-center text-lg text-gray-500">Loading...</p>
-    );
+export default async function Page({ params }: Props) {
+  const { id } = await params;
+
+  const guesthouse = await prisma.guesthouse.findUnique({
+    where: {
+      guesthouse_id: id,
+    },
+  });
+
+  if (!guesthouse) {
+    return <p className="py-20 text-center text-lg text-gray-500">Loading...</p>;
   }
 
   return (
@@ -38,23 +41,23 @@ export default function Page() {
       </nav>
 
       <div className="container space-y-6">
-        <h1 className="font-serif text-3xl">{house.name}</h1>
+        <h1 className="font-serif text-3xl">{guesthouse.guesthouse_name}</h1>
 
         <hr />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="h-[420px] overflow-hidden rounded-xl md:col-span-2">
             <Image
-              src={house.mainImage}
+              src={guesthouse.guesthouse_images[0]}
               width={900}
               height={600}
-              alt={house.name}
+              alt={guesthouse.guesthouse_name}
               className="h-full w-full object-cover"
             />
           </div>
 
           <div className="flex flex-col gap-4">
-            {house.images.slice(1, 3).map((img, i) => (
+            {guesthouse.guesthouse_images.slice(1, 3).map((img, i) => (
               <div
                 key={i}
                 className="h-[200px] overflow-hidden rounded-xl">
@@ -73,13 +76,11 @@ export default function Page() {
         <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-8">
           <div className="space-y-2 md:col-span-5">
             <h2 className="text-muted-foreground text-[13px]">
-              <span className="text-primary font-semibold tracking-wide">
-                PROPERTY LOCATION
-              </span>{' '}
-              - {house.propertyLocation}
+              <span className="text-primary font-semibold tracking-wide">PROPERTY LOCATION</span> -{' '}
+              {guesthouse.guesthouse_location}
             </h2>
 
-            <p>{house.location}</p>
+            <p>{guesthouse.guesthouse_description}</p>
           </div>
 
           <div className="w-full space-y-4 md:col-span-3">
@@ -89,14 +90,12 @@ export default function Page() {
               <hr />
 
               <div className="grid cursor-pointer grid-cols-4 items-center justify-center gap-4 rounded-xl">
-                {house.facilities.map((item, i) => (
+                {guestHouses[0].facilities.map((item, i) => (
                   <div
                     key={i}
                     className="hover:bg-primary/10 flex flex-col items-center justify-center rounded-lg py-4 transition">
                     <span className="text-4xl">{item.icon}</span>
-                    <span className="mt-2 text-center text-xs">
-                      {item.label}
-                    </span>
+                    <span className="mt-2 text-center text-xs">{item.label}</span>
                   </div>
                 ))}
               </div>
@@ -104,19 +103,22 @@ export default function Page() {
               <hr />
             </div>
 
-            <div className="overflow-hidden rounded-xl shadow-md">
+            <div className="overflow-hidden rounded-xl bg-gray-100 shadow-md">
               <iframe
-                src={house.mapUrl}
+                src={guesthouse.guesthouse_map_url}
                 width="100%"
                 height="260"
+                style={{ border: 0 }}
+                allowFullScreen={true}
                 loading="lazy"
-                className="border-0"></iframe>
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Google Maps"></iframe>
             </div>
           </div>
         </div>
       </div>
 
-      <AddFormPage guesthouseName={house.name} />
+      <AddFormPage guesthouseId={guesthouse.guesthouse_id} />
     </section>
   );
 }

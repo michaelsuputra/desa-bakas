@@ -14,11 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -30,11 +26,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { bookGuestHouse } from '../lib/action';
 
-export default function AddFormPage({
-  guesthouseName,
-}: {
-  guesthouseName: string;
-}) {
+export default function AddFormPage({ guesthouseId }: { guesthouseId: string }) {
   const [dateOfStay, setDateOfStay] = useState<Date>();
   const [dateOfCheckout, setDateOfCheckout] = useState<Date>();
   const [countries, setCountries] = useState<CountryItem[]>([]);
@@ -63,9 +55,7 @@ export default function AddFormPage({
     const result = await bookGuestHouse(formData);
 
     if (result?.success) {
-      toast.success(
-        'Thank you! Your booking request has been submitted successfully.'
-      );
+      toast.success('Thank you! Your booking request has been submitted successfully.');
       redirect('/');
     } else {
       console.log(result?.error);
@@ -82,8 +72,8 @@ export default function AddFormPage({
       <form action={clientAction}>
         <input
           type="hidden"
-          name="guesthouse_name"
-          value={guesthouseName}
+          name="guesthouse_id"
+          value={guesthouseId}
         />
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -189,11 +179,7 @@ export default function AddFormPage({
                       data-empty={!dateOfStay}
                       className="data-[empty=true]:text-muted-foreground justify-start text-left font-normal">
                       <CalendarIcon />
-                      {dateOfStay ? (
-                        format(dateOfStay, 'PPP')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      {dateOfStay ? format(dateOfStay, 'PPP') : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -223,11 +209,7 @@ export default function AddFormPage({
                       data-empty={!dateOfCheckout}
                       className="data-[empty=true]:text-muted-foreground justify-start text-left font-normal">
                       <CalendarIcon />
-                      {dateOfCheckout ? (
-                        format(dateOfCheckout, 'PPP')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      {dateOfCheckout ? format(dateOfCheckout, 'PPP') : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="p-0">
@@ -253,8 +235,7 @@ export default function AddFormPage({
 
             <div className="grid w-full items-center gap-3">
               <Label htmlFor="passport">
-                Passport{' '}
-                <span className="text-muted-foreground text-xs">(max 1MB)</span>
+                Passport <span className="text-muted-foreground text-xs">(max 1MB)</span>
               </Label>
               <Input
                 id="passport"
@@ -265,17 +246,6 @@ export default function AddFormPage({
                 required
               />
             </div>
-          </div>
-
-          <div className="grid w-full items-center gap-3 md:col-span-2">
-            <Label htmlFor="impression">Share your impression</Label>
-            <Textarea
-              required
-              id="impression"
-              name="impression"
-              placeholder="Enter your Share your impression"
-              className="h-[100px]"
-            />
           </div>
 
           <MyButton className="md:col-span-2" />

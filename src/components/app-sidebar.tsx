@@ -4,7 +4,14 @@ import * as React from 'react';
 
 import { Session } from 'next-auth';
 
-import { House, Languages, PieChart, TreePine } from 'lucide-react';
+import {
+  House,
+  HouseHeart,
+  Languages,
+  PieChart,
+  Star,
+  TreePine,
+} from 'lucide-react';
 
 import { NavProjects } from '@/components/nav-project';
 import { NavUser } from '@/components/nav-user';
@@ -37,10 +44,20 @@ const data = {
       url: '/kuisioner',
       icon: Languages,
     },
+    {
+      name: 'Guesthouse',
+      url: '/guesthouse',
+      icon: HouseHeart,
+    },
+    {
+      name: 'Review',
+      url: '/review',
+      icon: Star,
+    },
   ],
   navSecondary: [
     {
-      title: 'Guesthouse',
+      title: 'User Guesthouse',
       url: '/',
       icon: House,
     },
