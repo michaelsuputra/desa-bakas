@@ -1,5 +1,7 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+
 import { prisma } from '@/lib/prisma';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -79,5 +81,67 @@ export async function bookGuestHouse(formData: FormData) {
       error: error,
       success: false,
     };
+  }
+}
+
+export async function reviewGuestHouse(formData: FormData) {
+  try {
+    const guesthouse_id = formData.get('guesthouse_id') as string;
+    const impression = formData.get('impression') as string;
+    const rating = Number(formData.get('rating'));
+
+    const reviewEntry = formData.get('review_image') as File;
+    const reviewFile = reviewEntry instanceof File && reviewEntry.size > 0 ? reviewEntry : null;
+
+    let reviewUrl: string | null = null;
+
+    if (reviewFile) {
+      const folderName = 'desa-bakas/review';
+
+      const bytes = await reviewFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const res: { secure_url: string } = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: folderName,
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            if (result && result.secure_url) {
+              resolve(result as { secure_url: string });
+            } else {
+              reject(new Error('Upload failed'));
+            }
+          }
+        );
+        uploadStream.end(buffer);
+      });
+
+      reviewUrl = res?.secure_url;
+    }
+
+    const data = await prisma.review_guesthouse.create({
+      data: {
+        guesthouse_id: guesthouse_id,
+        impression,
+        rating,
+        review_image: reviewUrl,
+      },
+    });
+
+    console.log(data);
+
+    revalidatePath('/review');
+
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+
+    if (error instanceof Error) {
+      return { error: { message: error.message }, success: false };
+    }
+
+    return { error: { message: 'Something went wrong' }, success: false };
   }
 }
