@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { CountryItem, fetchCountries } from '@/lib/countries';
@@ -22,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { Rating, RatingButton } from '@/components/ui/shadcn-io/rating';
 
 import { bookGuestHouse } from '../lib/action';
 
@@ -248,7 +249,20 @@ export default function AddFormPage({ guesthouseId }: { guesthouseId: string }) 
             </div>
           </div>
 
-          <MyButton className="md:col-span-2" />
+          <div className="col-span-2 flex flex-col gap-2">
+            <MyButton />
+            <Link
+              className="hover:text-primary text-sm underline"
+              href="#">
+              Add Review
+            </Link>
+
+            <Rating defaultValue={3}>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <RatingButton key={index} />
+              ))}
+            </Rating>
+          </div>
         </div>
       </form>
     </div>
