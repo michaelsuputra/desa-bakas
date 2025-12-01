@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 
 import { CountryItem, fetchCountries } from '@/lib/countries';
 import { format } from 'date-fns';
-import { CalendarIcon, Flag } from 'lucide-react';
+import { CalendarIcon, Camera, ChevronDown, ChevronUp, Flag, MessageSquarePlus, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
 import MyButton from '@/components/custom/my-button';
@@ -23,14 +23,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import { Rating, RatingButton } from '@/components/ui/shadcn-io/rating';
 
 import { bookGuestHouse } from '../lib/action';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function AddFormPage({ guesthouseId }: { guesthouseId: string }) {
   const [dateOfStay, setDateOfStay] = useState<Date>();
   const [dateOfCheckout, setDateOfCheckout] = useState<Date>();
   const [countries, setCountries] = useState<CountryItem[]>([]);
+
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [ratingValue, setRatingValue] = useState(0);
 
   useEffect(() => {
     const fetchCountriesData = async () => {
@@ -249,19 +258,90 @@ export default function AddFormPage({ guesthouseId }: { guesthouseId: string }) 
             </div>
           </div>
 
-          <div className="col-span-2 flex flex-col gap-2">
+          <div className="col-span-1 mt-6 flex flex-col gap-6 md:col-span-2">
             <MyButton />
-            <Link
-              className="hover:text-primary text-sm underline"
-              href="#">
-              Add Review
-            </Link>
 
-            <Rating defaultValue={3}>
-              {Array.from({ length: 5 }).map((_, index) => (
-                <RatingButton key={index} />
-              ))}
-            </Rating>
+            <Collapsible open={isReviewOpen} onOpenChange={setIsReviewOpen}>
+
+              <div className="flex items-center justify-between  py-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full text-primary">
+                    <MessageSquarePlus className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Add a Review?</h3>
+                    <p className="text-muted-foreground text-xs">Share your experience with us</p>
+                  </div>
+                </div>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    {isReviewOpen ? 'Cancel' : 'Write Review'}
+                    {isReviewOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+
+
+              <CollapsibleContent className="space-y-6 pb-6 pt-2">
+                <div className="bg-muted/30 grid gap-6 rounded-lg border border-dashed p-6">
+                  {/* Rating Input */}
+                  <div className="space-y-3">
+                    <Label className="text-base font-medium">How was your stay?</Label>
+                    <div className="flex items-center gap-4">
+                      <Rating
+                        value={ratingValue}
+                        onValueChange={setRatingValue}
+                        className="gap-2"
+                      >
+                        {Array.from({ length: 5 }).map((_, index) => (
+                          <RatingButton
+                            key={index}
+                            size={28}
+                            className="hover:scale-110 transition-transform"
+                            icon={<Star className={index < ratingValue ? "fill-orange-400 text-orange-400" : "text-gray-300"} />}
+                          />
+                        ))}
+                      </Rating>
+                      <span className="text-muted-foreground text-sm font-medium">
+                        {ratingValue > 0 ? `${ratingValue} out of 5 stars` : 'Select stars'}
+                      </span>
+                      {/* Hidden Input for Backend Submission */}
+                      <input type="hidden" name="rating" value={ratingValue} />
+                    </div>
+                  </div>
+
+                  {/* Impression Textarea */}
+                  <div className="space-y-3">
+                    <Label htmlFor="impression" className="text-base font-medium">
+                      Tell us more about your experience
+                    </Label>
+                    <Textarea
+                      id="impression"
+                      name="impression"
+                      placeholder="What did you like best? What could be improved?"
+                      className="min-h-[120px] bg-white resize-none"
+                    />
+                  </div>
+
+                  {/* Review Image Upload */}
+                  <div className="space-y-3">
+                    <Label htmlFor="review_image" className="text-base font-medium">
+                      Add Photos
+                    </Label>
+                    <div className="flex items-center gap-4">
+                      <Input
+                        id="review_image"
+                        name="review_image"
+                        type="file"
+                        accept="image/*"
+                      // onChange={handleUploadFile}
+                      />
+                      <Camera className="text-muted-foreground h-5 w-5" />
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </div>
         </div>
       </form>
