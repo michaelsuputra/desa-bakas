@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+
 import { auth } from '@/auth';
 
 import { AppSidebar } from '@/components/app-sidebar';
@@ -14,6 +16,8 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/s
 
 export default async function Page({ children }: { children: React.ReactNode }) {
   const session = await auth();
+
+  if (session?.user.role === 'wisatawan') redirect('/');
 
   return (
     <SidebarProvider suppressHydrationWarning>

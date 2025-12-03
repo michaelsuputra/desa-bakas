@@ -4,24 +4,11 @@ import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
-import AuthButton from './auth-button';
+interface NavbarProps {
+  children?: React.ReactNode;
+}
 
-const NavLinks = [
-  // {
-  //   label: 'Guest House',
-  //   href: '/guesthouse',
-  // },
-  // {
-  //   label: 'Review',
-  //   href: '/review',
-  // },
-  {
-    label: 'Login',
-    href: '/login',
-  },
-];
-
-export default function Navbar() {
+export default function Navbar({ children }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
 
   // Scroll effect
@@ -41,18 +28,7 @@ export default function Navbar() {
           Bakas
         </Link>
 
-        {/* <div className="flex items-center gap-6">
-          {NavLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="cursor-pointer text-sm text-white hover:opacity-70">
-              {link.label}
-            </Link>
-          ))}
-        </div> */}
-
-        <AuthButton />
+        {children}
       </div>
     </nav>
   );

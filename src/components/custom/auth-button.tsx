@@ -1,8 +1,10 @@
 import React from 'react';
 
+import Link from 'next/link';
+
 import { auth, signIn, signOut } from '@/auth';
 
-import { Button } from '../ui/button';
+import { Button, buttonVariants } from '../ui/button';
 
 export default async function AuthButton() {
   // 1. Ambil session di Server Component
@@ -13,7 +15,7 @@ export default async function AuthButton() {
     return (
       <div className="flex items-center gap-4">
         {/* Menampilkan Email User */}
-        <p className="text-muted-foreground text-sm font-medium">{session.user.email}</p>
+        <p className="text-secondary text-sm font-medium">{session.user.email}</p>
 
         {/* Tombol Logout */}
         <form
@@ -22,7 +24,7 @@ export default async function AuthButton() {
             await signOut();
           }}>
           <Button
-            variant="ghost"
+            variant="destructive"
             type="submit">
             Logout
           </Button>
@@ -31,14 +33,17 @@ export default async function AuthButton() {
     );
   }
 
-  // 3. Tampilan jika user belum login
   return (
     <form
       action={async () => {
         'use server';
         await signIn();
       }}>
-      <Button type="submit">Login</Button>
+      <Link
+        className={buttonVariants({ variant: 'default' })}
+        href="/signin">
+        Login
+      </Link>
     </form>
   );
 }

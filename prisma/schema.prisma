@@ -34,7 +34,8 @@ model user {
   role       String   @default("wisatawan")
   created_at DateTime @default(now())
 
-  accounts Account[]
+  accounts               Account[]
+  guesthouse_transaction guesthouse_transaction[]
 }
 
 model kuisioner_guesthouse {
@@ -62,8 +63,36 @@ model guesthouse {
   guesthouse_description String
   guesthouse_map_url     String
 
-  kuisioner_guesthouse kuisioner_guesthouse[]
-  review_guesthouse    review_guesthouse[]
+  price Int @default(800000)
+
+  kuisioner_guesthouse   kuisioner_guesthouse[]
+  review_guesthouse      review_guesthouse[]
+  guesthouse_transaction guesthouse_transaction[]
+}
+
+model guesthouse_transaction {
+  guesthouse_transaction_id Int @id @default(autoincrement())
+
+  created_at     DateTime @default(now())
+  total_price    Int
+  quantity       Int
+  payment_method String
+
+  status      status_order
+  code        String
+  invoice_url String
+
+  guesthouse_id String?
+  user_id       String?
+
+  guesthouse guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  user       user?       @relation(fields: [user_id], references: [user_id])
+}
+
+enum status_order {
+  pending
+  success
+  failed
 }
 
 model review_guesthouse {

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { ArrowDown } from 'lucide-react';
 
+import AuthButton from '@/components/custom/auth-button';
 import Navbar from '@/components/custom/navbar';
 import { Input } from '@/components/ui/input';
 
@@ -12,7 +13,9 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
+      <Navbar>
+        <AuthButton />
+      </Navbar>
 
       {/* HERO */}
       <section
