@@ -36,6 +36,8 @@ model user {
 
   accounts               Account[]
   guesthouse_transaction guesthouse_transaction[]
+  kuisioner_guesthouse   kuisioner_guesthouse[]
+  review_guesthouse      review_guesthouse[]
 }
 
 model kuisioner_guesthouse {
@@ -51,8 +53,11 @@ model kuisioner_guesthouse {
   passport         String?
   booking_at       String?
 
-  guesthouse    guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
   guesthouse_id String?
+  user_id       String?
+
+  guesthouse guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  user       user?       @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 }
 
 model guesthouse {
@@ -71,16 +76,19 @@ model guesthouse {
 }
 
 model guesthouse_transaction {
-  guesthouse_transaction_id Int @id @default(autoincrement())
+  guesthouse_transaction_id String @id @default(cuid())
 
-  created_at     DateTime @default(now())
-  total_price    Int
-  quantity       Int
+  created_at  DateTime @default(now())
+  check_in    DateTime
+  check_out   DateTime
+  night_count Int
+  total_price Int
+  description String?
+
   payment_method String
-
-  status      status_order
-  code        String
-  invoice_url String
+  status         status_order
+  code           String
+  invoice_url    String
 
   guesthouse_id String?
   user_id       String?
@@ -101,6 +109,9 @@ model review_guesthouse {
   rating       Int
   review_image String?
 
-  guesthouse    guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  user_id       String?
   guesthouse_id String?
+
+  guesthouse guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  user       user?       @relation(fields: [user_id], references: [user_id])
 }

@@ -57,8 +57,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     jwt({ token, user }) {
       if (user) {
-        token.fullname = user.fullname;
         token.role = user.role;
+        token.fullname = user.fullname;
+        token.db_user_id = user.user_id;
       }
       return token;
     },
@@ -66,6 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = token.sub;
       session.user.fullname = token.fullname;
       session.user.role = token.role;
+      session.user.db_user_id = token.db_user_id;
       return session;
     },
   },

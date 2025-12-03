@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -14,8 +13,8 @@ cloudinary.config({
 
 export async function kuisionerGuestHouse(formData: FormData) {
   try {
-    const guesthouseId = formData.get('guesthouse_id') as string;
-    const fullname = formData.get('fullname') as string;
+    const guesthouse_id = formData.get('guesthouse_id') as string;
+    const user_id = formData.get('user_id') as string;
     const age = Number(formData.get('age'));
     const number_of_people = Number(formData.get('number_of_people'));
     const contact = formData.get('contact') as string;
@@ -59,8 +58,9 @@ export async function kuisionerGuestHouse(formData: FormData) {
 
     const data = await prisma.kuisioner_guesthouse.create({
       data: {
-        guesthouse_id: guesthouseId,
-        fullname,
+        guesthouse_id,
+        user_id,
+        fullname: 'Nanti dihapus',
         age,
         number_of_people,
         contact,
@@ -68,8 +68,8 @@ export async function kuisionerGuestHouse(formData: FormData) {
         country_flag,
         date_of_stay,
         date_of_checkout,
-        passport: passportUrl,
         booking_at,
+        passport: passportUrl,
       },
     });
 
@@ -87,12 +87,15 @@ export async function kuisionerGuestHouse(formData: FormData) {
 
 export async function reviewGuestHouse(formData: FormData) {
   try {
+    const user_id = formData.get('user_id') as string;
     const guesthouse_id = formData.get('guesthouse_id') as string;
     const impression = formData.get('impression') as string;
     const rating = Number(formData.get('rating'));
 
     const reviewEntry = formData.get('review_image') as File;
     const reviewFile = reviewEntry instanceof File && reviewEntry.size > 0 ? reviewEntry : null;
+
+    // console.log({ user_id, guesthouse_id, impression, rating, reviewFile });
 
     let reviewUrl: string | null = null;
 
@@ -124,6 +127,7 @@ export async function reviewGuestHouse(formData: FormData) {
 
     const data = await prisma.review_guesthouse.create({
       data: {
+        user_id,
         guesthouse_id: guesthouse_id,
         impression,
         rating,
@@ -144,46 +148,5 @@ export async function reviewGuestHouse(formData: FormData) {
     }
 
     return { error: { message: 'Something went wrong' }, success: false };
-  }
-}
-
-export async function bookingGuestHouse(formData: FormData) {
-  try {
-    const session = await auth();
-
-    const user_id = session?.user.db_user_id;
-    const guesthouse_id = formData.get('guesthouse_id') as string;
-    const check_in = formData.get('check_in') as string;
-    const check_out = formData.get('check_out') as string;
-    const night_count = Number(formData.get('night_count'));
-    const total_price = Number(formData.get('total_price'));
-    const description = formData.get('description') as string;
-
-    const data = await prisma.guesthouse_transaction.create({
-      data: {
-        user_id,
-        guesthouse_id,
-        check_in,
-        check_out,
-        night_count,
-        total_price,
-        description,
-
-        payment_method: 'BNI',
-        status: 'pending',
-        code: '123456',
-        invoice_url: 'https://example.com/invoice',
-      },
-    });
-
-    console.log(data);
-
-    return { success: true };
-  } catch (error) {
-    return {
-      message: 'Unable to complete the action. Please try again',
-      error: error,
-      success: false,
-    };
   }
 }

@@ -1,8 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { auth } from '@/auth';
 import { guestHouses } from '@/lib/mockdata';
 import { prisma } from '@/lib/prisma';
+
+import AuthButton from '@/components/custom/auth-button';
+import Navbar from '@/components/custom/navbar';
 
 import AddFormPage from '../components/add-form-page';
 import CheckoutForm from '../components/checkout-form';
@@ -26,26 +30,15 @@ export default async function Page({ params }: Props) {
 
   return (
     <section className="w-full space-y-8 bg-white pb-20">
-      <nav className="flex items-center justify-center border-b bg-white">
-        <div className="container flex items-center justify-between py-6">
-          <Link
-            href="/"
-            className="text-primary font-serif text-2xl font-light tracking-wider md:text-3xl">
-            Bakas
-          </Link>
-          <Link
-            href="/"
-            className="text-sm text-gray-700 hover:opacity-70">
-            Guest House
-          </Link>
-        </div>
-      </nav>
+      <Navbar>
+        <AuthButton />
+      </Navbar>
 
-      <div className="container space-y-3">
+      <div className="container space-y-3 pt-32">
         <h1 className="font-serif text-3xl">{guesthouse.guesthouse_name}</h1>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-8">
-          <div className="col-span-1 space-y-6 lg:col-span-5">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-10">
+          <div className="col-span-1 space-y-6 lg:col-span-7">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div className="h-[420px] overflow-hidden rounded-xl md:col-span-2">
                 <Image

@@ -14,8 +14,13 @@ export default async function AuthButton() {
   if (session && session.user) {
     return (
       <div className="flex items-center gap-4">
+        <Link
+          className="text-sm font-medium"
+          href="/booking-history">
+          My Booking
+        </Link>
         {/* Menampilkan Email User */}
-        <p className="text-secondary text-sm font-medium">{session.user.email}</p>
+        <p className="text-sm font-medium">{session.user.email}</p>
 
         {/* Tombol Logout */}
         <form

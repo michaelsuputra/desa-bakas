@@ -1,36 +1,87 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+
+import { redirect } from 'next/navigation';
 
 import { guesthouse } from '@prisma/client';
-import { format } from 'date-fns';
-import { AlignLeft, BadgeCheck } from 'lucide-react';
-import { Users } from 'lucide-react';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { differenceInCalendarDays, format } from 'date-fns';
+import { AlignLeft, BadgeCheck, Calendar as CalendarIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Separator } from '@/components/ui/separator';
+
+import { bookingGuestHouse } from '../lib/action';
 
 export default function CheckoutForm({ data }: { data: guesthouse }) {
   const [dateStart, setDateStart] = useState<Date>();
   const [dateEnd, setDateEnd] = useState<Date>();
 
+  const nights =
+    dateStart && dateEnd && dateEnd > dateStart ? differenceInCalendarDays(dateEnd, dateStart) : 0;
+
+  const totalPrice = nights * (data.price ?? 0);
+
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0,
+    }).format(value);
+
+  async function clientAction(formData: FormData) {
+    const result = await bookingGuestHouse(formData);
+
+    if (result?.success) {
+      toast.success('Thank you! Your booking request has been submitted successfully.');
+      redirect('/booking-history');
+    } else {
+      console.log(result?.error);
+      toast.error('Oops! Something went wrong during the process');
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 rounded-xl border px-5 py-7">
       <div className="flex flex-col">
-        <span className="text-muted-foreground text-sm">From</span>
+        <span className="text-muted-foreground text-sm">Price per night</span>
         <h2 className="text-foreground text-2xl font-semibold">
-          {new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            maximumFractionDigits: 0,
-          }).format(data.price ?? 0)}{' '}
+          {formatCurrency(data.price ?? 0)}
         </h2>
       </div>
 
-      <form>
+      <form action={clientAction}>
+        <input
+          type="hidden"
+          name="guesthouse_id"
+          value={data.guesthouse_id}
+        />
+
+        <input
+          type="hidden"
+          name="total_price"
+          value={totalPrice}
+        />
+        <input
+          type="hidden"
+          name="night_count"
+          value={nights}
+        />
+        <input
+          type="hidden"
+          name="check_in"
+          value={dateStart?.toISOString() ?? ''}
+        />
+        <input
+          type="hidden"
+          name="check_out"
+          value={dateEnd?.toISOString() ?? ''}
+        />
+
         <div className="flex flex-col gap-2">
           <Popover>
             <PopoverTrigger asChild>
@@ -47,6 +98,7 @@ export default function CheckoutForm({ data }: { data: guesthouse }) {
                 mode="single"
                 selected={dateStart}
                 onSelect={setDateStart}
+                disabled={(date) => date < new Date()}
               />
             </PopoverContent>
           </Popover>
@@ -66,6 +118,7 @@ export default function CheckoutForm({ data }: { data: guesthouse }) {
                 mode="single"
                 selected={dateEnd}
                 onSelect={setDateEnd}
+                disabled={(date) => (dateStart ? date <= dateStart : date < new Date())}
               />
             </PopoverContent>
           </Popover>
@@ -86,9 +139,26 @@ export default function CheckoutForm({ data }: { data: guesthouse }) {
 
       <hr />
 
-      <div className="flex flex-col gap-3">Total</div>
+      {nights > 0 && (
+        <>
+          <div className="flex flex-col gap-2">
+            <div className="mb-2 flex justify-between text-sm">
+              <span className="text-muted-foreground underline">
+                {formatCurrency(data.price ?? 0)} x {nights} nights
+              </span>
+              <span>{formatCurrency(totalPrice)}</span>
+            </div>
 
-      <hr />
+            <hr />
+
+            <div className="mt-2 flex justify-between font-semibold">
+              <span>Total</span>
+              <span>{formatCurrency(totalPrice)}</span>
+            </div>
+          </div>
+          <Separator />
+        </>
+      )}
 
       <div className="flex flex-col gap-3">
         <div className="flex items-start gap-2">

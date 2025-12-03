@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { CountryItem, fetchCountries } from '@/lib/countries';
@@ -35,7 +34,7 @@ import {
 import { Rating, RatingButton } from '@/components/ui/shadcn-io/rating';
 import { Textarea } from '@/components/ui/textarea';
 
-import { bookGuestHouse, reviewGuestHouse } from '../lib/action';
+import { kuisionerGuestHouse, reviewGuestHouse } from '../lib/action';
 
 export default function AddFormPage({ guesthouseId }: { guesthouseId: string }) {
   const [dateOfStay, setDateOfStay] = useState<Date>();
@@ -66,7 +65,7 @@ export default function AddFormPage({ guesthouseId }: { guesthouseId: string }) 
   };
 
   async function clientAction(formData: FormData) {
-    const result = await bookGuestHouse(formData);
+    const result = await kuisionerGuestHouse(formData);
 
     if (result?.success) {
       toast.success('Thank you! Your booking request has been submitted successfully.');
