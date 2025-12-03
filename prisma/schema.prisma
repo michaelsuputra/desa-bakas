@@ -28,9 +28,10 @@ model Account {
 
 model user {
   user_id    String   @id @default(cuid())
-  fullname   String?
-  email      String?  @unique
-  password   String?
+  fullname   String
+  email      String   @unique
+  password   String
+  role       String   @default("wisatawan")
   created_at DateTime @default(now())
 
   accounts Account[]

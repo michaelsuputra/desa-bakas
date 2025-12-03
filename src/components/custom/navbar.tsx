@@ -4,6 +4,23 @@ import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
+import AuthButton from './auth-button';
+
+const NavLinks = [
+  // {
+  //   label: 'Guest House',
+  //   href: '/guesthouse',
+  // },
+  // {
+  //   label: 'Review',
+  //   href: '/review',
+  // },
+  {
+    label: 'Login',
+    href: '/login',
+  },
+];
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -24,7 +41,18 @@ export default function Navbar() {
           Bakas
         </Link>
 
-        <div className="cursor-pointer text-sm text-white hover:opacity-70">Guest House</div>
+        {/* <div className="flex items-center gap-6">
+          {NavLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="cursor-pointer text-sm text-white hover:opacity-70">
+              {link.label}
+            </Link>
+          ))}
+        </div> */}
+
+        <AuthButton />
       </div>
     </nav>
   );
