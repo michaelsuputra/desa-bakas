@@ -45,6 +45,7 @@ export async function getKuisioner(
       where,
       include: {
         guesthouse: true,
+        user: true,
       },
     }),
     prisma.kuisioner_guesthouse.count({ where }),

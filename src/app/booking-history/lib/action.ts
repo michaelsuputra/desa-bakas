@@ -15,6 +15,7 @@ export async function kuisionerGuestHouse(formData: FormData) {
   try {
     const guesthouse_id = formData.get('guesthouse_id') as string;
     const user_id = formData.get('user_id') as string;
+    const guesthouse_transaction_id = formData.get('guesthouse_transaction_id') as string;
     const age = Number(formData.get('age'));
     const number_of_people = Number(formData.get('number_of_people'));
     const contact = formData.get('contact') as string;
@@ -22,7 +23,7 @@ export async function kuisionerGuestHouse(formData: FormData) {
     const country_flag = formData.get('country_flag') as string;
     const date_of_stay = formData.get('date_of_stay') as string;
     const date_of_checkout = formData.get('date_of_checkout') as string;
-    const booking_at = formData.get('booking_at') as string;
+    const booking_at = 'Website Platform';
 
     const passportEntry = formData.get('passport') as File;
     const passportFile =
@@ -60,7 +61,7 @@ export async function kuisionerGuestHouse(formData: FormData) {
       data: {
         guesthouse_id,
         user_id,
-        fullname: 'Nanti dihapus',
+        guesthouse_transaction_id,
         age,
         number_of_people,
         contact,
@@ -75,6 +76,7 @@ export async function kuisionerGuestHouse(formData: FormData) {
 
     console.log(data);
 
+    revalidatePath('/booking-history');
     return { success: true };
   } catch (error) {
     return {
@@ -89,6 +91,7 @@ export async function reviewGuestHouse(formData: FormData) {
   try {
     const user_id = formData.get('user_id') as string;
     const guesthouse_id = formData.get('guesthouse_id') as string;
+    const guesthouse_transaction_id = formData.get('guesthouse_transaction_id') as string;
     const impression = formData.get('impression') as string;
     const rating = Number(formData.get('rating'));
 
@@ -128,7 +131,8 @@ export async function reviewGuestHouse(formData: FormData) {
     const data = await prisma.review_guesthouse.create({
       data: {
         user_id,
-        guesthouse_id: guesthouse_id,
+        guesthouse_id,
+        guesthouse_transaction_id,
         impression,
         rating,
         review_image: reviewUrl,

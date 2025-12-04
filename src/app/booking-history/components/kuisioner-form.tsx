@@ -99,6 +99,12 @@ export default function KuisionerForm({
 
           <input
             type="hidden"
+            name="guesthouse_transaction_id"
+            value={booking.guesthouse_transaction_id}
+          />
+
+          <input
+            type="hidden"
             name="user_id"
             value={session.user.db_user_id || ''}
           />
@@ -185,16 +191,6 @@ export default function KuisionerForm({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="grid w-full items-center gap-3">
-              <Label htmlFor="booking_at">Booking at</Label>
-              <Input
-                required
-                id="booking_at"
-                name="booking_at"
-                placeholder="Traveloka, Agoda, Direct, etc"
-              />
             </div>
 
             <div className="grid w-full items-center gap-3">

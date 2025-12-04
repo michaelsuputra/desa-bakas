@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Session } from 'next-auth';
 
 import {
+  CalendarCheck,
   House,
   HouseHeart,
   Languages,
@@ -53,6 +54,11 @@ const data = {
       name: 'Review',
       url: '/review',
       icon: Star,
+    },
+    {
+      name: 'Booking',
+      url: '/booking',
+      icon: CalendarCheck,
     },
   ],
   navSecondary: [

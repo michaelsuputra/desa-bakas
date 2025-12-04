@@ -42,7 +42,6 @@ model user {
 
 model kuisioner_guesthouse {
   kuisioner_id     String    @id @default(cuid())
-  fullname         String
   age              Int?
   number_of_people Int?
   contact          String?
@@ -53,11 +52,13 @@ model kuisioner_guesthouse {
   passport         String?
   booking_at       String?
 
-  guesthouse_id String?
-  user_id       String?
+  guesthouse_id             String?
+  user_id                   String?
+  guesthouse_transaction_id String?
 
-  guesthouse guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
-  user       user?       @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  guesthouse             guesthouse?             @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  user                   user?                   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  guesthouse_transaction guesthouse_transaction? @relation(fields: [guesthouse_transaction_id], references: [guesthouse_transaction_id])
 }
 
 model guesthouse {
@@ -81,8 +82,8 @@ model guesthouse_transaction {
   created_at  DateTime @default(now())
   check_in    DateTime
   check_out   DateTime
-  night_count Int
-  total_price Int
+  night_count Int?
+  total_price Int?
   description String?
 
   payment_method String
@@ -93,8 +94,10 @@ model guesthouse_transaction {
   guesthouse_id String?
   user_id       String?
 
-  guesthouse guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
-  user       user?       @relation(fields: [user_id], references: [user_id])
+  guesthouse           guesthouse?            @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  user                 user?                  @relation(fields: [user_id], references: [user_id])
+  review_guesthouse    review_guesthouse[]
+  kuisioner_guesthouse kuisioner_guesthouse[]
 }
 
 enum status_order {
@@ -109,9 +112,11 @@ model review_guesthouse {
   rating       Int
   review_image String?
 
-  user_id       String?
-  guesthouse_id String?
+  user_id                   String?
+  guesthouse_id             String?
+  guesthouse_transaction_id String?
 
-  guesthouse guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
-  user       user?       @relation(fields: [user_id], references: [user_id])
+  guesthouse             guesthouse?             @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  user                   user?                   @relation(fields: [user_id], references: [user_id])
+  guesthouse_transaction guesthouse_transaction? @relation(fields: [guesthouse_transaction_id], references: [guesthouse_transaction_id])
 }

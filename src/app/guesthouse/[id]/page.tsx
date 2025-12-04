@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { auth } from '@/auth';
 import { guestHouses } from '@/lib/mockdata';
@@ -17,6 +16,7 @@ type Props = {
 
 export default async function Page({ params }: Props) {
   const { id } = await params;
+  const session = await auth();
 
   const guesthouse = await prisma.guesthouse.findUnique({
     where: {
@@ -115,12 +115,15 @@ export default async function Page({ params }: Props) {
           </div>
 
           <div className="col-span-3">
-            <CheckoutForm data={guesthouse} />
+            <CheckoutForm
+              session={session}
+              data={guesthouse}
+            />
           </div>
         </div>
       </div>
 
-      <AddFormPage guesthouseId={guesthouse.guesthouse_id} />
+      {/* <AddFormPage guesthouseId={guesthouse.guesthouse_id} /> */}
     </section>
   );
 }

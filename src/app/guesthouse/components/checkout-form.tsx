@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { Session } from 'next-auth';
 import { redirect } from 'next/navigation';
 
 import { guesthouse } from '@prisma/client';
@@ -16,8 +17,15 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Separator } from '@/components/ui/separator';
 
 import { bookingGuestHouse } from '../lib/action';
+import KuisionerForm from './kuisioner-form';
 
-export default function CheckoutForm({ data }: { data: guesthouse }) {
+export default function CheckoutForm({
+  data,
+  session,
+}: {
+  data: guesthouse;
+  session: Session | null;
+}) {
   const [dateStart, setDateStart] = useState<Date>();
   const [dateEnd, setDateEnd] = useState<Date>();
 
@@ -57,6 +65,12 @@ export default function CheckoutForm({ data }: { data: guesthouse }) {
       <form action={clientAction}>
         <input
           type="hidden"
+          name="user_id"
+          value={session?.user.db_user_id ?? ''}
+        />
+
+        <input
+          type="hidden"
           name="guesthouse_id"
           value={data.guesthouse_id}
         />
@@ -88,6 +102,7 @@ export default function CheckoutForm({ data }: { data: guesthouse }) {
               <Button
                 variant="outline"
                 data-empty={!dateStart}
+                disabled={!session}
                 className="data-[empty=true]:text-muted-foreground h-10 w-full items-center justify-start gap-6 rounded-full">
                 <CalendarIcon />
                 {dateStart ? format(dateStart, 'd MMM yyyy') : <span>Pick a start date</span>}
@@ -108,6 +123,7 @@ export default function CheckoutForm({ data }: { data: guesthouse }) {
               <Button
                 variant="outline"
                 data-empty={!dateEnd}
+                disabled={!session}
                 className="data-[empty=true]:text-muted-foreground h-10 w-full items-center justify-start gap-6 rounded-full">
                 <CalendarIcon />
                 {dateEnd ? format(dateEnd, 'd MMM yyyy') : <span>Pick an end date</span>}
@@ -126,6 +142,7 @@ export default function CheckoutForm({ data }: { data: guesthouse }) {
           <InputGroup className="h-10 gap-4 rounded-full">
             <InputGroupInput
               name="description"
+              disabled={!session}
               placeholder="Additional description"
             />
             <InputGroupAddon>
@@ -133,7 +150,21 @@ export default function CheckoutForm({ data }: { data: guesthouse }) {
             </InputGroupAddon>
           </InputGroup>
 
-          <Button className="h-10 w-full rounded-full">Book Now</Button>
+          <Button
+            disabled={!session}
+            className="h-10 w-full rounded-full">
+            Book Now
+          </Button>
+
+          {!session && (
+            <p className="text-destructive text-xs italic">
+              Please sign in to book this guesthouse.
+            </p>
+          )}
+
+          <p className="text-muted-foreground text-xs">
+            Already book in another platform? <KuisionerForm data={data} />
+          </p>
         </div>
       </form>
 

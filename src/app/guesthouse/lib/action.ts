@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -15,7 +14,6 @@ cloudinary.config({
 export async function kuisionerGuestHouse(formData: FormData) {
   try {
     const guesthouseId = formData.get('guesthouse_id') as string;
-    const fullname = formData.get('fullname') as string;
     const age = Number(formData.get('age'));
     const number_of_people = Number(formData.get('number_of_people'));
     const contact = formData.get('contact') as string;
@@ -60,7 +58,6 @@ export async function kuisionerGuestHouse(formData: FormData) {
     const data = await prisma.kuisioner_guesthouse.create({
       data: {
         guesthouse_id: guesthouseId,
-        fullname,
         age,
         number_of_people,
         contact,
@@ -149,9 +146,7 @@ export async function reviewGuestHouse(formData: FormData) {
 
 export async function bookingGuestHouse(formData: FormData) {
   try {
-    const session = await auth();
-
-    const user_id = session?.user.db_user_id;
+    const user_id = formData.get('user_id') as string;
     const guesthouse_id = formData.get('guesthouse_id') as string;
     const check_in = formData.get('check_in') as string;
     const check_out = formData.get('check_out') as string;
@@ -177,6 +172,77 @@ export async function bookingGuestHouse(formData: FormData) {
     });
 
     console.log(data);
+
+    return { success: true };
+  } catch (error) {
+    return {
+      message: 'Unable to complete the action. Please try again',
+      error: error,
+      success: false,
+    };
+  }
+}
+
+export async function alreadyBookGuestHouse(formData: FormData) {
+  try {
+    const guesthouse_id = formData.get('guesthouse_id') as string;
+
+    // create user
+    const fullname = formData.get('fullname') as string;
+    const email = formData.get('email') as string;
+    const password = 'pa$$word123';
+
+    // kuisioner fill
+    const age = Number(formData.get('age'));
+    const number_of_people = Number(formData.get('number_of_people'));
+    const contact = formData.get('contact') as string;
+    const country = formData.get('country') as string;
+    const country_flag = formData.get('country_flag') as string;
+    const date_of_stay = formData.get('date_of_stay') as string;
+    const date_of_checkout = formData.get('date_of_checkout') as string;
+    const booking_at = formData.get('booking_at') as string;
+
+    const user = await prisma.user.create({
+      data: {
+        fullname,
+        email,
+        password,
+      },
+    });
+
+    console.log({ 'Success create user': user });
+
+    const kuisioner = await prisma.kuisioner_guesthouse.create({
+      data: {
+        guesthouse_id,
+        user_id: user.user_id,
+        age,
+        number_of_people,
+        contact,
+        country,
+        country_flag,
+        date_of_stay,
+        date_of_checkout,
+        booking_at,
+      },
+    });
+
+    console.log({ 'Success create kuisioner': kuisioner });
+
+    // console.log({
+    //   guesthouse_id,
+    //   fullName,
+    //   email,
+    //   password,
+    //   age,
+    //   number_of_people,
+    //   contact,
+    //   country,
+    //   country_flag,
+    //   date_of_stay,
+    //   date_of_checkout,
+    //   booking_at,
+    // });
 
     return { success: true };
   } catch (error) {

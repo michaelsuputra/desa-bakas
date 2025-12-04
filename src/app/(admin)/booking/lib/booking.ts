@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 
-export async function getReview(
+export async function getBooking(
   currentPage: number,
   pageSize: number = 10,
   searchQuery?: string,
@@ -9,11 +9,18 @@ export async function getReview(
 ) {
   const skip = (currentPage - 1) * pageSize;
 
-  const where: Prisma.review_guesthouseWhereInput = {};
+  const where: Prisma.guesthouse_transactionWhereInput = {};
 
   if (searchQuery) {
     where.OR = [
-      { guesthouse: { guesthouse_name: { contains: searchQuery, mode: 'insensitive' } } },
+      {
+        guesthouse: {
+          guesthouse_name: {
+            contains: searchQuery,
+            mode: 'insensitive',
+          },
+        },
+      },
     ];
   }
 
@@ -24,16 +31,18 @@ export async function getReview(
   }
 
   const [data, totalCount] = await Promise.all([
-    prisma.review_guesthouse.findMany({
+    prisma.guesthouse_transaction.findMany({
       take: pageSize,
       skip,
       where,
       include: {
         guesthouse: true,
         user: true,
+        kuisioner_guesthouse: true,
+        review_guesthouse: true,
       },
     }),
-    prisma.review_guesthouse.count({ where }),
+    prisma.guesthouse_transaction.count({ where }),
   ]);
 
   const totalPages = Math.ceil(totalCount / pageSize);

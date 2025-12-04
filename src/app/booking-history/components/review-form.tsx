@@ -66,6 +66,12 @@ export default function ReviewForm({
         value={booking.guesthouse_id || ''}
       />
 
+      <input
+        type="hidden"
+        name="guesthouse_transaction_id"
+        value={booking.guesthouse_transaction_id}
+      />
+
       <Collapsible
         open={isReviewOpen}
         onOpenChange={setIsReviewOpen}>

@@ -48,6 +48,7 @@ export default async function DataTable({ searchParams }: PageProps) {
           <TableHeader>
             <TableRow>
               <TableHead>Guesthouse</TableHead>
+              <TableHead>User Fullname</TableHead>
               <TableHead>Impression</TableHead>
               <TableHead>Rating</TableHead>
               <TableHead>Review Image</TableHead>
@@ -57,6 +58,7 @@ export default async function DataTable({ searchParams }: PageProps) {
             {data.map((guesthouse) => (
               <TableRow key={guesthouse.review_id}>
                 <TableCell>{guesthouse.guesthouse?.guesthouse_name}</TableCell>
+                <TableCell>{guesthouse.user?.fullname}</TableCell>
                 <TableCell>
                   <div className="line-clamp-4 max-w-[400px] text-pretty whitespace-normal">
                     {guesthouse.impression}
@@ -66,18 +68,22 @@ export default async function DataTable({ searchParams }: PageProps) {
                   <span className="text-primary font-bold">{guesthouse.rating}</span> out of 5 stars
                 </TableCell>
                 <TableCell>
-                  <ImageZoom zoomMargin={100}>
-                    <div className="border-primary relative aspect-video max-w-20 overflow-hidden border-2">
-                      <Image
-                        alt="Passport"
-                        src={guesthouse.review_image || ''}
-                        sizes="80"
-                        className="object-cover"
-                        fill={true}
-                        priority={true}
-                      />
-                    </div>
-                  </ImageZoom>
+                  {guesthouse.review_image ? (
+                    <ImageZoom zoomMargin={100}>
+                      <div className="border-primary relative aspect-video max-w-20 overflow-hidden border-2">
+                        <Image
+                          alt="Passport"
+                          src={guesthouse.review_image || ''}
+                          sizes="80"
+                          className="object-cover"
+                          fill={true}
+                          priority={true}
+                        />
+                      </div>
+                    </ImageZoom>
+                  ) : (
+                    <span className="text-muted-foreground">No Image</span>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

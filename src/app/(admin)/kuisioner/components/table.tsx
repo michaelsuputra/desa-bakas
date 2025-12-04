@@ -90,7 +90,7 @@ export default async function DataTable({ searchParams }: PageProps) {
             {data.map((kuisioner) => (
               <TableRow key={kuisioner.kuisioner_id}>
                 <TableCell>{kuisioner.guesthouse?.guesthouse_name}</TableCell>
-                <TableCell>{kuisioner.fullname}</TableCell>
+                <TableCell>{kuisioner.user?.fullname}</TableCell>
                 <TableCell>{kuisioner.age}</TableCell>
                 <TableCell>{kuisioner.number_of_people}</TableCell>
                 <TableCell>{kuisioner.contact}</TableCell>
