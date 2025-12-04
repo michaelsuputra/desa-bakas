@@ -48,8 +48,7 @@ export default function CheckoutForm({
       toast.success('Thank you! Your booking request has been submitted successfully.');
       redirect('/booking-history');
     } else {
-      console.log(result?.error);
-      toast.error('Oops! Something went wrong during the process');
+      toast.error(result?.error?.message || 'Failed to create Meeting Room Transaction');
     }
   }
 

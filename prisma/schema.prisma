@@ -54,7 +54,7 @@ model kuisioner_guesthouse {
 
   guesthouse_id             String?
   user_id                   String?
-  guesthouse_transaction_id String?
+  guesthouse_transaction_id String? @unique
 
   guesthouse             guesthouse?             @relation(fields: [guesthouse_id], references: [guesthouse_id])
   user                   user?                   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
@@ -94,10 +94,11 @@ model guesthouse_transaction {
   guesthouse_id String?
   user_id       String?
 
-  guesthouse           guesthouse?            @relation(fields: [guesthouse_id], references: [guesthouse_id])
-  user                 user?                  @relation(fields: [user_id], references: [user_id])
-  review_guesthouse    review_guesthouse[]
-  kuisioner_guesthouse kuisioner_guesthouse[]
+  guesthouse guesthouse? @relation(fields: [guesthouse_id], references: [guesthouse_id])
+  user       user?       @relation(fields: [user_id], references: [user_id])
+
+  review_guesthouse    review_guesthouse?
+  kuisioner_guesthouse kuisioner_guesthouse?
 }
 
 enum status_order {
@@ -114,7 +115,7 @@ model review_guesthouse {
 
   user_id                   String?
   guesthouse_id             String?
-  guesthouse_transaction_id String?
+  guesthouse_transaction_id String? @unique
 
   guesthouse             guesthouse?             @relation(fields: [guesthouse_id], references: [guesthouse_id])
   user                   user?                   @relation(fields: [user_id], references: [user_id])

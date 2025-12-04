@@ -19,6 +19,15 @@ export default async function AuthButton() {
           href="/booking-history">
           My Booking
         </Link>
+
+        {session.user.role !== 'wisatawan' && (
+          <Link
+            className="text-sm font-medium"
+            href="/dashboard">
+            Dashboard
+          </Link>
+        )}
+
         {/* Menampilkan Email User */}
         <p className="text-sm font-medium">{session.user.email}</p>
 

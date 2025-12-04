@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 import MyButton from '@/components/custom/my-button';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Field,
@@ -20,10 +19,7 @@ import { Input } from '@/components/ui/input';
 
 import { signUpUser } from '../lib/actions';
 
-export function SignupForm({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
+export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
   const router = useRouter();
 
   async function clientAction(formData: FormData) {
@@ -62,9 +58,7 @@ export function SignupForm({
                   placeholder="Krisna Dipa"
                   required
                 />
-                <FieldDescription>
-                  Please provide your full name.
-                </FieldDescription>
+                <FieldDescription>Please provide your full name.</FieldDescription>
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -76,8 +70,7 @@ export function SignupForm({
                   required
                 />
                 <FieldDescription>
-                  We&apos;ll use this to contact you. We will not share your
-                  email with anyone else.
+                  We&apos;ll use this to contact you. We will not share your email with anyone else.
                 </FieldDescription>
               </Field>
               <Field>
@@ -88,9 +81,7 @@ export function SignupForm({
                   name="password"
                   required
                 />
-                <FieldDescription>
-                  Must be at least 8 characters long.
-                </FieldDescription>
+                <FieldDescription>Must be at least 8 characters long.</FieldDescription>
               </Field>
 
               <Field>
@@ -113,8 +104,8 @@ export function SignupForm({
       </Card>
 
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{' '}
-        and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our <a href="#">Terms of Service</a> and{' '}
+        <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
   );

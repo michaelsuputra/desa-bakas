@@ -15,7 +15,7 @@ export async function getKuisioner(
 
   if (searchQuery) {
     where.OR = [
-      { fullname: { contains: searchQuery, mode: 'insensitive' } },
+      { user: { fullname: { contains: searchQuery, mode: 'insensitive' } } },
       {
         guesthouse: {
           guesthouse_name: { contains: searchQuery, mode: 'insensitive' },

@@ -7,7 +7,6 @@ import { prisma } from '@/lib/prisma';
 import AuthButton from '@/components/custom/auth-button';
 import Navbar from '@/components/custom/navbar';
 
-import AddFormPage from '../components/add-form-page';
 import CheckoutForm from '../components/checkout-form';
 
 type Props = {
@@ -122,8 +121,6 @@ export default async function Page({ params }: Props) {
           </div>
         </div>
       </div>
-
-      {/* <AddFormPage guesthouseId={guesthouse.guesthouse_id} /> */}
     </section>
   );
 }

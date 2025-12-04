@@ -14,7 +14,7 @@ import {
   TreePine,
 } from 'lucide-react';
 
-import { NavProjects } from '@/components/nav-project';
+import { NavOverview } from '@/components/nav-overview';
 import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
@@ -26,6 +26,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
+import { NavManagement } from './nav-management';
 import { NavSecondary } from './nav-secondary';
 
 const data = {
@@ -34,7 +35,7 @@ const data = {
     email: 'm@example.com',
     avatar: '/avatars/shadcn.jpg',
   },
-  projects: [
+  overview: [
     {
       name: 'Dashboard',
       url: '/dashboard',
@@ -46,11 +47,6 @@ const data = {
       icon: Languages,
     },
     {
-      name: 'Guesthouse',
-      url: '/guesthouse',
-      icon: HouseHeart,
-    },
-    {
       name: 'Review',
       url: '/review',
       icon: Star,
@@ -59,6 +55,13 @@ const data = {
       name: 'Booking',
       url: '/booking',
       icon: CalendarCheck,
+    },
+  ],
+  management: [
+    {
+      name: 'Guesthouse',
+      url: '/guesthouse',
+      icon: HouseHeart,
     },
   ],
   navSecondary: [
@@ -98,7 +101,8 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects projects={data.projects} />
+        <NavOverview projects={data.overview} />
+        <NavManagement projects={data.management} />
         <NavSecondary items={data.navSecondary} />
       </SidebarContent>
       <SidebarFooter>

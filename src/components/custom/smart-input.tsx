@@ -4,18 +4,11 @@ import { useEffect, useState } from 'react';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { Search } from 'lucide-react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Input } from '@/components/ui/input';
 
-const SmartInput = ({
-  placeholder,
-  query,
-}: {
-  placeholder: string;
-  query: string;
-}) => {
+const SmartInput = ({ placeholder, query }: { placeholder: string; query: string }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();

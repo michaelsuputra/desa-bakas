@@ -18,10 +18,7 @@ import { Input } from '@/components/ui/input';
 
 import { signInUser } from '../lib/actions';
 
-export function SigninForm({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
+export function SigninForm({ className, ...props }: React.ComponentProps<'div'>) {
   async function clientAction(formData: FormData) {
     const result = await signInUser(formData);
 
@@ -73,7 +70,7 @@ export function SigninForm({
               </Field>
               <FieldSeparator />
               <FieldDescription className="text-center">
-                Don't have an account? <Link href="/signup">Sign up</Link>
+                Don&apos;t have an account? <Link href="/signup">Sign up</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
@@ -88,8 +85,8 @@ export function SigninForm({
       </Card>
 
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{' '}
-        and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our <a href="#">Terms of Service</a> and{' '}
+        <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
   );

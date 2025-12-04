@@ -117,18 +117,22 @@ export default async function DataTable({ searchParams }: PageProps) {
                 </TableCell>
                 <TableCell>{kuisioner.booking_at}</TableCell>
                 <TableCell>
-                  <ImageZoom zoomMargin={100}>
-                    <div className="border-primary relative aspect-3/4 max-w-20 overflow-hidden border-2">
-                      <Image
-                        alt="Passport"
-                        src={kuisioner.passport || ''}
-                        sizes="80"
-                        className="object-cover"
-                        fill={true}
-                        priority={true}
-                      />
-                    </div>
-                  </ImageZoom>
+                  {kuisioner.passport ? (
+                    <ImageZoom zoomMargin={100}>
+                      <div className="border-primary relative aspect-3/4 max-w-20 overflow-hidden border-2">
+                        <Image
+                          alt="Passport"
+                          src={kuisioner.passport || ''}
+                          sizes="80"
+                          className="object-cover"
+                          fill={true}
+                          priority={true}
+                        />
+                      </div>
+                    </ImageZoom>
+                  ) : (
+                    'No passport'
+                  )}
                 </TableCell>
               </TableRow>
             ))}

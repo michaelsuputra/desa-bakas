@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { redirect } from 'next/navigation';
-
 import { CountryItem, fetchCountries } from '@/lib/countries';
 import { guesthouse } from '@prisma/client';
 import { format } from 'date-fns';
@@ -66,10 +64,8 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
     const result = await alreadyBookGuestHouse(formData);
     if (result?.success) {
       toast.success('Thank you! Your booking request has been submitted successfully.');
-      // redirect('/booking-history');
     } else {
-      console.log(result?.error);
-      toast.error('Oops! Something went wrong during the process');
+      toast.error(result?.error?.message || 'Failed to create Meeting Room Transaction');
     }
   }
 
@@ -104,7 +100,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                 <Input
                   id="fullname"
                   name="fullname"
-                  defaultValue="Pedro Duarte"
+                  placeholder="Enter your fullname"
                 />
               </div>
 
@@ -113,7 +109,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                 <Input
                   id="email"
                   name="email"
-                  defaultValue="Pedro Duarte"
+                  placeholder="Enter your email"
                 />
               </div>
             </div>
@@ -263,7 +259,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                 />
               </div>
 
-              {/* <div className="grid w-full items-center gap-3">
+              <div className="grid w-full items-center gap-3">
                 <Label htmlFor="passport">
                   Passport <span className="text-muted-foreground text-xs">(max 1MB)</span>
                 </Label>
@@ -275,7 +271,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                   onChange={handleUploadFile}
                   required
                 />
-              </div> */}
+              </div>
             </div>
           </div>
 

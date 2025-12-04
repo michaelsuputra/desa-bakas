@@ -28,7 +28,7 @@ export default async function DataTable({ searchParams }: PageProps) {
       style: 'currency',
       currency: 'IDR',
       maximumFractionDigits: 0,
-    }).format(value);
+    }).format(value ?? 0);
 
   return (
     <div className="space-y-4">
@@ -66,23 +66,13 @@ export default async function DataTable({ searchParams }: PageProps) {
                 <TableCell>{guesthouse.guesthouse?.guesthouse_name}</TableCell>
                 <TableCell>{guesthouse.user?.fullname}</TableCell>
                 <TableCell>
-                  <Badge
-                    className={
-                      guesthouse.kuisioner_guesthouse.length > 0 ? 'bg-sky-500' : 'bg-red-500'
-                    }>
-                    {guesthouse.kuisioner_guesthouse.length > 0
-                      ? 'Kuisioner Filled'
-                      : 'Kuisioner Not Filled'}
+                  <Badge className={guesthouse.kuisioner_guesthouse ? 'bg-sky-500' : 'bg-red-500'}>
+                    {guesthouse.kuisioner_guesthouse ? 'Kuisioner Filled' : 'Kuisioner Not Filled'}
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge
-                    className={
-                      guesthouse.review_guesthouse.length > 0 ? 'bg-sky-500' : 'bg-red-500'
-                    }>
-                    {guesthouse.review_guesthouse.length > 0
-                      ? 'Review Filled'
-                      : 'Review Not Filled'}
+                  <Badge className={guesthouse.review_guesthouse ? 'bg-sky-500' : 'bg-red-500'}>
+                    {guesthouse.review_guesthouse ? 'Review Filled' : 'Review Not Filled'}
                   </Badge>
                 </TableCell>
                 <TableCell>
@@ -92,7 +82,7 @@ export default async function DataTable({ searchParams }: PageProps) {
                   </Badge>
                 </TableCell>
                 <TableCell>{guesthouse.night_count}</TableCell>
-                <TableCell>{formatCurrency(guesthouse.total_price)}</TableCell>
+                <TableCell>{formatCurrency(guesthouse.total_price ?? 0)}</TableCell>
                 <TableCell>{guesthouse.payment_method}</TableCell>
               </TableRow>
             ))}

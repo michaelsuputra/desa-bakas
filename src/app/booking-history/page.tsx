@@ -5,15 +5,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { format } from 'date-fns';
-import {
-  CalendarDays,
-  CheckCircle2,
-  MapPin,
-  MessageSquarePlus,
-  Moon,
-  Plus,
-  Star,
-} from 'lucide-react';
+import { CalendarDays, CheckCircle2, MapPin, Moon, Star } from 'lucide-react';
 
 import AuthButton from '@/components/custom/auth-button';
 import Navbar from '@/components/custom/navbar';
@@ -184,7 +176,7 @@ export default async function BookingHistoryPage() {
                         <div className="space-y-1">
                           <span className="text-muted-foreground block text-xs">Total Price</span>
                           <span className="text-foreground font-bold">
-                            {formatCurrency(booking.total_price)}
+                            {formatCurrency(booking.total_price ?? 0)}
                           </span>
                         </div>
                       </div>
