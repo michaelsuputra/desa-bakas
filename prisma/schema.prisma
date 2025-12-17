@@ -88,7 +88,7 @@ model guesthouse_transaction {
 
   payment_method String?
   status         status_order?
-  code           String?
+  code           String?       @unique
   invoice_url    String?
 
   guesthouse_id String?

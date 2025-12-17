@@ -18,8 +18,6 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/in
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 
-import KuisionerForm from './kuisioner-form';
-
 export default function CheckoutForm({
   data,
   session,
@@ -181,10 +179,6 @@ export default function CheckoutForm({
           )}
         </div>
       </form>
-
-      <p className="text-muted-foreground text-xs">
-        Already book in another platform? <KuisionerForm data={data} />
-      </p>
 
       <hr />
 
