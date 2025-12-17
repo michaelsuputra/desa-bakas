@@ -1,6 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { formatCurrency, getBaseUrl } from '@/lib/utils';
+import { guesthouse } from '@prisma/client';
+import axios from 'axios';
+
 import SmartInput from '@/components/custom/smart-input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom';
@@ -14,13 +18,33 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { getGuesthouse } from '../lib/guesthouse';
 import { PageProps } from '../page';
 
 export default async function DataTable({ searchParams }: PageProps) {
   const { search, page } = await searchParams;
 
-  const { data, totalCount } = await getGuesthouse(Number(page) || 1, 10, search);
+  let data: guesthouse[] = [];
+  let totalCount = 0;
+
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/guesthouse`, {
+      params: {
+        page: Number(page) || 1,
+        limit: 10,
+        search,
+      },
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    data = response.data.data;
+    totalCount = response.data.totalCount;
+  } catch (error) {
+    console.error('Failed to fetch data via API:', error);
+  }
 
   return (
     <div className="space-y-4">
@@ -39,6 +63,7 @@ export default async function DataTable({ searchParams }: PageProps) {
             <TableRow>
               <TableHead>Guesthouse Name</TableHead>
               <TableHead>Location</TableHead>
+              <TableHead>Price</TableHead>
               <TableHead>Map URL</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Images</TableHead>
@@ -54,6 +79,7 @@ export default async function DataTable({ searchParams }: PageProps) {
                     {guesthouse.guesthouse_location}
                   </div>
                 </TableCell>
+                <TableCell>{formatCurrency(guesthouse.price)}</TableCell>
                 <TableCell>
                   <Link
                     href={guesthouse.guesthouse_map_url}

@@ -2,6 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { prisma } from '@/lib/prisma';
+import { getBaseUrl } from '@/lib/utils';
+import { guesthouse } from '@prisma/client';
+import axios from 'axios';
 import { ArrowDown } from 'lucide-react';
 
 import AuthButton from '@/components/custom/auth-button';
@@ -9,7 +12,21 @@ import Navbar from '@/components/custom/navbar';
 import { Input } from '@/components/ui/input';
 
 export default async function Home() {
-  const data = await prisma.guesthouse.findMany();
+  let data: guesthouse[] = [];
+
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/guesthouse`, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    data = response.data.data;
+  } catch (error) {
+    console.error('Failed to fetch data via API:', error);
+  }
 
   return (
     <div className="min-h-screen bg-white">

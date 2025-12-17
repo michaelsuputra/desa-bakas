@@ -86,10 +86,10 @@ model guesthouse_transaction {
   total_price Int?
   description String?
 
-  payment_method String
-  status         status_order
-  code           String
-  invoice_url    String
+  payment_method String?
+  status         status_order?
+  code           String?
+  invoice_url    String?
 
   guesthouse_id String?
   user_id       String?

@@ -1,3 +1,7 @@
+import { formatCurrency, getBaseUrl } from '@/lib/utils';
+import { Prisma, guesthouse } from '@prisma/client';
+import axios from 'axios';
+
 import SmartInput from '@/components/custom/smart-input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -12,23 +16,58 @@ import {
 } from '@/components/ui/table';
 
 import SelectGuesthouse from '../../kuisioner/components/select-guesthouse';
-import { getGuesthousesList } from '../../kuisioner/lib/kuisioner';
-import { getBooking } from '../lib/booking';
 import { PageProps } from '../page';
+
+type BookingData = Prisma.guesthouse_transactionGetPayload<{
+  include: {
+    guesthouse: true;
+    user: true;
+    kuisioner_guesthouse: true;
+    review_guesthouse: true;
+  };
+}>;
 
 export default async function DataTable({ searchParams }: PageProps) {
   const { search, page, guesthouse } = await searchParams;
 
-  const { data, totalCount } = await getBooking(Number(page) || 1, 10, search, guesthouse);
+  let data: BookingData[] = [];
+  let guesthousesList: guesthouse[] = [];
+  let totalCount = 0;
 
-  const guesthousesList = await getGuesthousesList();
+  try {
+    const baseUrl = getBaseUrl();
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0,
-    }).format(value ?? 0);
+    const response = await axios.get(`${baseUrl}/api/booking`, {
+      params: {
+        page: Number(page) || 1,
+        limit: 10,
+        search,
+        guesthouse,
+      },
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    data = response.data.data;
+    totalCount = response.data.totalCount;
+  } catch (error) {
+    console.error('Failed to fetch data via API:', error);
+  }
+
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/guesthouse`, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    guesthousesList = response.data.data;
+  } catch (error) {
+    console.error('Failed to fetch guesthouses via API:', error);
+  }
 
   return (
     <div className="space-y-4">

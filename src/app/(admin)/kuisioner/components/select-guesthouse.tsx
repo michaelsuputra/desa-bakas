@@ -2,6 +2,8 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import { guesthouse } from '@prisma/client';
+
 import {
   Select,
   SelectContent,
@@ -14,7 +16,7 @@ export default function SelectGuesthouse({
   guesthouses,
   currentGuesthouse,
 }: {
-  guesthouses: string[];
+  guesthouses: guesthouse[];
   currentGuesthouse?: string;
 }) {
   const searchParams = useSearchParams();
@@ -23,7 +25,7 @@ export default function SelectGuesthouse({
 
   const handleSelect = (value: string) => {
     const params = new URLSearchParams(searchParams);
-    params.set('page', '1'); // Reset ke halaman 1 saat filter berubah
+    params.set('page', '1');
 
     if (value === 'all') {
       params.delete('guesthouse');
@@ -45,9 +47,9 @@ export default function SelectGuesthouse({
         <SelectItem value="all">All Guesthouse</SelectItem>
         {guesthouses.map((name) => (
           <SelectItem
-            key={name}
-            value={name}>
-            {name}
+            key={name.guesthouse_id}
+            value={name.guesthouse_name}>
+            {name.guesthouse_name}
           </SelectItem>
         ))}
       </SelectContent>

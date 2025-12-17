@@ -1,6 +1,8 @@
-import React from 'react';
-
 import Image from 'next/image';
+
+import { getBaseUrl } from '@/lib/utils';
+import { Prisma, guesthouse } from '@prisma/client';
+import axios from 'axios';
 
 import SmartInput from '@/components/custom/smart-input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -16,16 +18,56 @@ import {
 } from '@/components/ui/table';
 
 import SelectGuesthouse from '../../kuisioner/components/select-guesthouse';
-import { getGuesthousesList } from '../../kuisioner/lib/kuisioner';
-import { getReview } from '../lib/review';
 import { PageProps } from '../page';
+
+type ReviewData = Prisma.review_guesthouseGetPayload<{
+  include: {
+    guesthouse: true;
+    user: true;
+  };
+}>;
 
 export default async function DataTable({ searchParams }: PageProps) {
   const { search, page, guesthouse } = await searchParams;
 
-  const { data, totalCount } = await getReview(Number(page) || 1, 10, search, guesthouse);
+  let data: ReviewData[] = [];
+  let guesthousesList: guesthouse[] = [];
+  let totalCount = 0;
 
-  const guesthousesList = await getGuesthousesList();
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/review`, {
+      params: {
+        page: Number(page) || 1,
+        limit: 10,
+        search,
+        guesthouse,
+      },
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    data = response.data.data;
+    totalCount = response.data.totalCount;
+  } catch (error) {
+    console.error('Failed to fetch data via API:', error);
+  }
+
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/guesthouse`, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    guesthousesList = response.data.data;
+  } catch (error) {
+    console.error('Failed to fetch guesthouses via API:', error);
+  }
 
   return (
     <div className="space-y-4">
@@ -55,7 +97,7 @@ export default async function DataTable({ searchParams }: PageProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((guesthouse) => (
+            {data.map((guesthouse: ReviewData) => (
               <TableRow key={guesthouse.review_id}>
                 <TableCell>{guesthouse.guesthouse?.guesthouse_name}</TableCell>
                 <TableCell>{guesthouse.user?.fullname}</TableCell>

@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { CountryItem, fetchCountries } from '@/lib/countries';
+import { getBaseUrl } from '@/lib/utils';
 import { guesthouse } from '@prisma/client';
+import axios from 'axios';
 import { format } from 'date-fns';
 import { CalendarIcon, Flag } from 'lucide-react';
 import { toast } from 'sonner';
 
-import MyButton from '@/components/custom/my-button';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -33,12 +36,13 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 
-import { alreadyBookGuestHouse } from '../lib/action';
-
 export default function KuisionerForm({ data }: { data: guesthouse }) {
+  const router = useRouter();
+
   const [dateOfStay, setDateOfStay] = useState<Date>();
   const [dateOfCheckout, setDateOfCheckout] = useState<Date>();
   const [countries, setCountries] = useState<CountryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchCountriesData = async () => {
@@ -60,12 +64,36 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
     }
   };
 
-  async function clientAction(formData: FormData) {
-    const result = await alreadyBookGuestHouse(formData);
-    if (result?.success) {
-      toast.success('Thank you! Your booking request has been submitted successfully.');
-    } else {
-      toast.error(result?.error?.message || 'Failed to create Meeting Room Transaction');
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    setIsLoading(true);
+
+    const formData = new FormData(event.currentTarget);
+    const baseUrl = getBaseUrl();
+
+    try {
+      const response = await axios.post(`${baseUrl}/api/checkout-other-platform`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        toast.success('Kuisioner added successfully.');
+        router.refresh();
+        // router.push('/booking-history');
+      }
+    } catch (error) {
+      console.error(error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error || 'Failed to create kuisioner');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -82,7 +110,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
           </DialogDescription>
         </DialogHeader>
         <form
-          action={clientAction}
+          onSubmit={handleSubmit}
           className="flex flex-col items-end gap-4">
           <input
             type="hidden"
@@ -101,6 +129,8 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                   id="fullname"
                   name="fullname"
                   placeholder="Enter your fullname"
+                  disabled={isLoading}
+                  required
                 />
               </div>
 
@@ -110,6 +140,8 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                   id="email"
                   name="email"
                   placeholder="Enter your email"
+                  disabled={isLoading}
+                  required
                 />
               </div>
             </div>
@@ -124,6 +156,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                   name="age"
                   placeholder="Enter your age"
                   type="number"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -135,6 +168,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                   name="number_of_people"
                   placeholder="Enter number of people"
                   type="number"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -146,6 +180,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                   name="contact"
                   placeholder="Enter your contact number"
                   type="number"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -153,6 +188,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                 <Label htmlFor="country">Country</Label>
                 <Select
                   name="country"
+                  disabled={isLoading}
                   required>
                   <SelectTrigger
                     id="country"
@@ -204,6 +240,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                     <Button
                       variant="outline"
                       data-empty={!dateOfStay}
+                      disabled={isLoading}
                       className="data-[empty=true]:text-muted-foreground justify-start text-left font-normal">
                       <CalendarIcon />
                       {dateOfStay ? format(dateOfStay, 'PPP') : <span>Pick a date</span>}
@@ -234,6 +271,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                     <Button
                       variant="outline"
                       data-empty={!dateOfCheckout}
+                      disabled={isLoading}
                       className="data-[empty=true]:text-muted-foreground justify-start text-left font-normal">
                       <CalendarIcon />
                       {dateOfCheckout ? format(dateOfCheckout, 'PPP') : <span>Pick a date</span>}
@@ -255,6 +293,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                   required
                   id="booking_at"
                   name="booking_at"
+                  disabled={isLoading}
                   placeholder="Traveloka, Agoda, Direct, etc"
                 />
               </div>
@@ -268,6 +307,7 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
                   name="passport"
                   type="file"
                   accept=".jpg, .png, .jpeg"
+                  disabled={isLoading}
                   onChange={handleUploadFile}
                   required
                 />
@@ -282,7 +322,11 @@ export default function KuisionerForm({ data }: { data: guesthouse }) {
               <Button variant="outline">Cancel</Button>
             </DialogClose>
 
-            <MyButton />
+            <Button
+              type="submit"
+              disabled={isLoading}>
+              {isLoading ? 'Processing...' : 'Submit'}
+            </Button>
           </div>
         </form>
         <DialogFooter />

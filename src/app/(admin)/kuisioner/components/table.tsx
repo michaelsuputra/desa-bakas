@@ -1,5 +1,8 @@
 import Image from 'next/image';
 
+import { getBaseUrl } from '@/lib/utils';
+import { Prisma, guesthouse } from '@prisma/client';
+import axios from 'axios';
 import { format } from 'date-fns';
 
 import SmartInput from '@/components/custom/smart-input';
@@ -15,33 +18,66 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import {
-  getGuesthousesList,
-  getKuisioner,
-  getUniqueBooking,
-  getUniqueCountry,
-} from '../lib/kuisioner';
+import { getUniqueBooking, getUniqueCountry } from '../lib/kuisioner';
 import { PageProps } from '../page';
 import SelectBooking from './select-booking';
 import SelectCountry from './select-country';
 import SelectGuesthouse from './select-guesthouse';
 
+type KuisionerData = Prisma.kuisioner_guesthouseGetPayload<{
+  include: {
+    guesthouse: true;
+    user: true;
+  };
+}>;
+
 export default async function DataTable({ searchParams }: PageProps) {
   const { search, page, booking, country, guesthouse } = await searchParams;
 
-  const { data, totalCount } = await getKuisioner(
-    Number(page) || 1,
-    10,
-    search,
-    booking,
-    country,
-    guesthouse
-  );
+  let data: KuisionerData[] = [];
+  let guesthousesList: guesthouse[] = [];
+  let totalCount = 0;
 
-  const [uniqueBooking, uniqueCountry, guesthousesList] = await Promise.all([
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/kuisioner`, {
+      params: {
+        page: Number(page) || 1,
+        limit: 10,
+        search,
+        booking,
+        country,
+        guesthouse,
+      },
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    data = response.data.data;
+    totalCount = response.data.totalCount;
+  } catch (error) {
+    console.error('Failed to fetch data via API:', error);
+  }
+
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/guesthouse`, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    guesthousesList = response.data.data;
+  } catch (error) {
+    console.error('Failed to fetch guesthouses via API:', error);
+  }
+
+  const [uniqueBooking, uniqueCountry] = await Promise.all([
     getUniqueBooking(),
     getUniqueCountry(),
-    getGuesthousesList(),
   ]);
 
   return (
@@ -87,7 +123,7 @@ export default async function DataTable({ searchParams }: PageProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((kuisioner) => (
+            {data.map((kuisioner: KuisionerData) => (
               <TableRow key={kuisioner.kuisioner_id}>
                 <TableCell>{kuisioner.guesthouse?.guesthouse_name}</TableCell>
                 <TableCell>{kuisioner.user?.fullname}</TableCell>

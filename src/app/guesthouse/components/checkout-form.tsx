@@ -3,9 +3,11 @@
 import { useState } from 'react';
 
 import { Session } from 'next-auth';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
+import { formatCurrency, getBaseUrl } from '@/lib/utils';
 import { guesthouse } from '@prisma/client';
+import axios from 'axios';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { AlignLeft, BadgeCheck, Calendar as CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -16,7 +18,6 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/in
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 
-import { bookingGuestHouse } from '../lib/action';
 import KuisionerForm from './kuisioner-form';
 
 export default function CheckoutForm({
@@ -26,29 +27,45 @@ export default function CheckoutForm({
   data: guesthouse;
   session: Session | null;
 }) {
+  const router = useRouter();
+
   const [dateStart, setDateStart] = useState<Date>();
   const [dateEnd, setDateEnd] = useState<Date>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const nights =
     dateStart && dateEnd && dateEnd > dateStart ? differenceInCalendarDays(dateEnd, dateStart) : 0;
 
   const totalPrice = nights * (data.price ?? 0);
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0,
-    }).format(value);
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
 
-  async function clientAction(formData: FormData) {
-    const result = await bookingGuestHouse(formData);
+    const formData = new FormData(event.currentTarget);
+    const baseUrl = getBaseUrl();
 
-    if (result?.success) {
-      toast.success('Thank you! Your booking request has been submitted successfully.');
-      redirect('/booking-history');
-    } else {
-      toast.error(result?.error?.message || 'Failed to create Meeting Room Transaction');
+    try {
+      const response = await axios.post(`${baseUrl}/api/guesthouse-checkout`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        toast.success('Guesthouse added successfully.');
+        router.refresh();
+        router.push('/booking-history');
+      }
+    } catch (error) {
+      console.error(error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error || 'Failed to create Guesthouse');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -61,7 +78,7 @@ export default function CheckoutForm({
         </h2>
       </div>
 
-      <form action={clientAction}>
+      <form onSubmit={handleSubmit}>
         <input
           type="hidden"
           name="user_id"
@@ -112,7 +129,7 @@ export default function CheckoutForm({
                 mode="single"
                 selected={dateStart}
                 onSelect={setDateStart}
-                disabled={(date) => date < new Date()}
+                disabled={(date) => date < new Date() || isLoading}
               />
             </PopoverContent>
           </Popover>
@@ -133,7 +150,9 @@ export default function CheckoutForm({
                 mode="single"
                 selected={dateEnd}
                 onSelect={setDateEnd}
-                disabled={(date) => (dateStart ? date <= dateStart : date < new Date())}
+                disabled={(date) =>
+                  (dateStart ? date <= dateStart : date < new Date()) || isLoading
+                }
               />
             </PopoverContent>
           </Popover>
@@ -141,7 +160,7 @@ export default function CheckoutForm({
           <InputGroup className="h-10 gap-4 rounded-full">
             <InputGroupInput
               name="description"
-              disabled={!session}
+              disabled={!session || isLoading}
               placeholder="Additional description"
             />
             <InputGroupAddon>
@@ -150,9 +169,9 @@ export default function CheckoutForm({
           </InputGroup>
 
           <Button
-            disabled={!session}
+            disabled={!session || isLoading}
             className="h-10 w-full rounded-full">
-            Book Now
+            {isLoading ? 'Loading...' : 'Book Now'}
           </Button>
 
           {!session && (
@@ -160,12 +179,12 @@ export default function CheckoutForm({
               Please sign in to book this guesthouse.
             </p>
           )}
-
-          <p className="text-muted-foreground text-xs">
-            Already book in another platform? <KuisionerForm data={data} />
-          </p>
         </div>
       </form>
+
+      <p className="text-muted-foreground text-xs">
+        Already book in another platform? <KuisionerForm data={data} />
+      </p>
 
       <hr />
 

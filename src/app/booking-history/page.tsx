@@ -4,13 +4,14 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { formatCurrency } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarDays, CheckCircle2, MapPin, Moon, Star } from 'lucide-react';
 
 import AuthButton from '@/components/custom/auth-button';
 import Navbar from '@/components/custom/navbar';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom';
 
@@ -47,13 +48,6 @@ export default async function BookingHistoryPage() {
       user_id: session.user.db_user_id,
     },
   });
-
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0,
-    }).format(value);
 
   return (
     <div className="min-h-screen bg-gray-50/50 pb-20">
@@ -127,7 +121,7 @@ export default async function BookingHistoryPage() {
                           Kuisioner Filled
                         </Badge>
                       )}
-                      <StatusBadge status={booking.status} />
+                      <StatusBadge status={booking.status || 'pending'} />
                     </div>
                   </div>
                 </CardHeader>
@@ -186,7 +180,14 @@ export default async function BookingHistoryPage() {
 
                 <CardFooter className="bg-muted/10 flex flex-col items-end gap-8 border-t px-6 py-4">
                   <div className="flex gap-2">
-                    {booking.status === 'pending' && <Button size="sm">Pay Now</Button>}
+                    {booking.status === 'pending' && (
+                      <Link
+                        className={buttonVariants({ variant: 'default', size: 'sm' })}
+                        href={booking.invoice_url || ''}
+                        target="_blank">
+                        Pay Now
+                      </Link>
+                    )}
 
                     <Button
                       variant="outline"

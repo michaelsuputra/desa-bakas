@@ -1,4 +1,4 @@
-'use server';
+import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/prisma';
 import { v2 as cloudinary } from 'cloudinary';
@@ -9,46 +9,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
-export async function bookingGuestHouse(formData: FormData) {
+export async function POST(request: Request) {
   try {
-    const user_id = formData.get('user_id') as string;
-    const guesthouse_id = formData.get('guesthouse_id') as string;
-    const check_in = formData.get('check_in') as string;
-    const check_out = formData.get('check_out') as string;
-    const night_count = Number(formData.get('night_count'));
-    const total_price = Number(formData.get('total_price'));
-    const description = formData.get('description') as string;
+    const formData = await request.formData();
 
-    const data = await prisma.guesthouse_transaction.create({
-      data: {
-        user_id,
-        guesthouse_id,
-        check_in,
-        check_out,
-        night_count,
-        total_price,
-        description,
-
-        payment_method: 'BNI',
-        status: 'pending',
-        code: '123456',
-        invoice_url: 'https://example.com/invoice',
-      },
-    });
-
-    console.log(data);
-
-    return { success: true };
-  } catch (error) {
-    if (error instanceof Error) {
-      return { error: { message: error.message }, success: false };
-    }
-    return { error: { message: 'Something went wrong' }, success: false };
-  }
-}
-
-export async function alreadyBookGuestHouse(formData: FormData) {
-  try {
     const guesthouse_id = formData.get('guesthouse_id') as string;
 
     // create user
@@ -62,8 +26,8 @@ export async function alreadyBookGuestHouse(formData: FormData) {
     const contact = formData.get('contact') as string;
     const country = formData.get('country') as string;
     const country_flag = formData.get('country_flag') as string;
-    const date_of_stay = formData.get('date_of_stay') as string;
-    const date_of_checkout = formData.get('date_of_checkout') as string;
+    const date_of_stay = formData.get('date_of_stay') as Date | string;
+    const date_of_checkout = formData.get('date_of_checkout') as Date | string;
     const booking_at = formData.get('booking_at') as string;
     const passportEntry = formData.get('passport') as File;
     const passportFile =
@@ -133,11 +97,9 @@ export async function alreadyBookGuestHouse(formData: FormData) {
 
     console.log({ 'Success create kuisioner': kuisioner });
 
-    return { success: true };
+    return NextResponse.json({ success: true, user, kuisioner });
   } catch (error) {
-    if (error instanceof Error) {
-      return { error: { message: error.message }, success: false };
-    }
-    return { error: { message: 'Something went wrong' }, success: false };
+    console.error('Error create kuisioner', error);
+    return NextResponse.json({ error: 'Failed to create kuisioner' }, { status: 500 });
   }
 }
