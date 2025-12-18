@@ -1,7 +1,7 @@
 'use client';
 
 import { TrendingUp } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 import {
   Card,
@@ -20,59 +20,65 @@ import {
 
 export const description = 'A bar chart';
 
-const chartData = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 73 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
-];
 const chartConfig = {
-  desktop: {
-    label: 'Desktop',
-    color: 'var(--chart-1)',
+  total: {
+    label: 'Total Bookings',
+    color: 'hsl(var(--chart-1))',
   },
 } satisfies ChartConfig;
 
-export default function ChartWisatawan() {
+interface ChartWisatawanProps {
+  data: {
+    guesthouse: string;
+    total: number;
+  }[];
+}
+
+export default function ChartWisatawan({ data }: ChartWisatawanProps) {
+  const totalBookings = data.reduce((acc, curr) => acc + curr.total, 0);
+  const topGuesthouse = data.length > 0 ? data[0].guesthouse : 'N/A';
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bar Chart</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Guesthouse Popularity</CardTitle>
+        <CardDescription>Total successful bookings per guesthouse</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={chartData}>
+            data={data}
+            layout="horizontal">
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="guesthouse"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              // Truncate long names if necessary or hide if too many
+              tickFormatter={(value) => (value.length > 10 ? `${value.slice(0, 10)}...` : value)}
             />
+            <YAxis allowDecimals={false} />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent hideLabel={false} />}
             />
             <Bar
-              dataKey="desktop"
-              fill="var(--color-desktop)"
-              radius={8}
+              dataKey="total"
+              fill="#ff7e5f"
+              radius={[4, 4, 0, 0]}
+              name="Bookings"
             />
           </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Top guesthouse: {topGuesthouse} <TrendingUp className="h-4 w-4" />
         </div>
         <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
+          Showing total of {totalBookings} bookings across all guesthouses
         </div>
       </CardFooter>
     </Card>

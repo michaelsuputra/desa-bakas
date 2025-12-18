@@ -1,8 +1,28 @@
 import React from 'react';
 
+import { prisma } from '@/lib/prisma';
+import { getBaseUrl } from '@/lib/utils';
+import axios from 'axios';
+
 import ChartWisatawan from './chart-wisatawan';
 
-export default function Page() {
+export default async function Page() {
+  let formattedData: any;
+
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/chart-guesthouse`, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    formattedData = response.data.formattedData;
+  } catch (error) {
+    console.error('Failed to fetch data via API:', error);
+  }
+
   return (
     <section className="space-y-4">
       <header className="space-y-1">
@@ -13,7 +33,7 @@ export default function Page() {
       </header>
 
       <hr />
-      <ChartWisatawan />
+      <ChartWisatawan data={formattedData} />
     </section>
   );
 }
