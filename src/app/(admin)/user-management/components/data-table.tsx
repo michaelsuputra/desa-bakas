@@ -50,7 +50,7 @@ export default async function DataTable({ searchParams }: PageProps) {
     console.error('Failed to fetch data via API:', error);
   }
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <div className="space-y-4">

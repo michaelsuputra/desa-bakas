@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Session } from 'next-auth';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { formatCurrency, getBaseUrl } from '@/lib/utils';
 import { guesthouse } from '@prisma/client';
 import axios from 'axios';
-import { differenceInCalendarDays, format } from 'date-fns';
+import { differenceInCalendarDays, format, isWithinInterval, subDays } from 'date-fns';
 import { AlignLeft, BadgeCheck, Calendar as CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -17,6 +17,11 @@ import { Calendar } from '@/components/ui/calendar';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
+
+type DateRange = {
+  check_in: string;
+  check_out: string;
+};
 
 export default function CheckoutForm({
   data,
@@ -30,11 +35,65 @@ export default function CheckoutForm({
   const [dateStart, setDateStart] = useState<Date>();
   const [dateEnd, setDateEnd] = useState<Date>();
   const [isLoading, setIsLoading] = useState(false);
+  const [bookedDates, setBookedDates] = useState<DateRange[]>([]);
+
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      try {
+        const baseUrl = getBaseUrl();
+        const response = await axios.get(
+          `${baseUrl}/api/guesthouse/${data.guesthouse_id}/availability`
+        );
+        if (response.data.success) {
+          setBookedDates(response.data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch availability:', error);
+        toast.error('Gagal memuat ketersediaan kamar.');
+      }
+    };
+
+    fetchAvailability();
+  }, [data.guesthouse_id]);
 
   const nights =
     dateStart && dateEnd && dateEnd > dateStart ? differenceInCalendarDays(dateEnd, dateStart) : 0;
 
   const totalPrice = nights * (data.price ?? 0);
+
+  const isDateDisabled = (date: Date) => {
+    // Disable tanggal hari ini dan sebelumnya
+    if (date < new Date()) return true;
+
+    // Cek apakah tanggal berada dalam rentang booking yang ada
+    // Logika: Tanggal check-in tamu lain tidak bisa dipilih, tapi tanggal check-out mereka BISA menjadi check-in kita
+    return bookedDates.some((booking) => {
+      const start = new Date(booking.check_in);
+      const end = new Date(booking.check_out);
+
+      // Kita disable semua hari DI ANTARA check-in dan check-out
+      // Serta hari check-in itu sendiri.
+      // Hari check-out tamu sebelumnya biasanya boleh menjadi check-in tamu baru (tergantung kebijakan),
+      // tapi untuk keamanan kita anggap blocked range [start, end)
+      return isWithinInterval(date, { start: start, end: subDays(end, 1) });
+    });
+  };
+
+  const isEndDateDisabled = (date: Date) => {
+    if (isDateDisabled(date)) return true;
+    if (!dateStart) return false;
+
+    // Tidak boleh memilih tanggal sebelum start date
+    if (date <= dateStart) return true;
+
+    // Cek apakah ada booking orang lain di antara Start Date dan tanggal yang dipilih
+    const isOverlapping = bookedDates.some((booking) => {
+      const bookingStart = new Date(booking.check_in);
+      return bookingStart > dateStart && bookingStart < date;
+    });
+
+    return isOverlapping;
+  };
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -126,8 +185,11 @@ export default function CheckoutForm({
               <Calendar
                 mode="single"
                 selected={dateStart}
-                onSelect={setDateStart}
-                disabled={(date) => date < new Date() || isLoading}
+                onSelect={(date) => {
+                  setDateStart(date);
+                  setDateEnd(undefined);
+                }}
+                disabled={isDateDisabled}
               />
             </PopoverContent>
           </Popover>
@@ -148,9 +210,7 @@ export default function CheckoutForm({
                 mode="single"
                 selected={dateEnd}
                 onSelect={setDateEnd}
-                disabled={(date) =>
-                  (dateStart ? date <= dateStart : date < new Date()) || isLoading
-                }
+                disabled={isEndDateDisabled}
               />
             </PopoverContent>
           </Popover>

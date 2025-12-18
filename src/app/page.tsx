@@ -61,7 +61,7 @@ export default async function Home() {
     console.error('Failed to fetch data via API:', error);
   }
 
-  console.log(newsEvent);
+  // console.log(newsEvent);
 
   return (
     <div className="min-h-screen bg-white">

@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       invoiceDuration: 86400,
       externalId: transactionCode,
       currency: 'IDR',
-      successRedirectUrl: 'http://localhost:3000/guesthouse/' + guesthouse_id,
+      successRedirectUrl: 'http://localhost:3000/booking-history',
     };
 
     const response: Invoice = await xenditClient.Invoice.createInvoice({ data });
