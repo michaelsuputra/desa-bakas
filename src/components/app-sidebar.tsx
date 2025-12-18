@@ -13,6 +13,7 @@ import {
   PieChart,
   Star,
   TreePine,
+  User,
 } from 'lucide-react';
 
 import { NavOverview } from '@/components/nav-overview';
@@ -68,6 +69,11 @@ const data = {
       name: 'News Event',
       url: '/news-event',
       icon: Book,
+    },
+    {
+      name: 'User Management',
+      url: '/user-management',
+      icon: User,
     },
   ],
   navSecondary: [
