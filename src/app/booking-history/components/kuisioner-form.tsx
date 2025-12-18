@@ -3,9 +3,12 @@
 import { useEffect, useState } from 'react';
 
 import { Session } from 'next-auth';
+import { useRouter } from 'next/navigation';
 
 import { CountryItem, fetchCountries } from '@/lib/countries';
+import { getBaseUrl } from '@/lib/utils';
 import { guesthouse_transaction } from '@prisma/client';
+import axios from 'axios';
 import { Flag } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -31,8 +34,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { kuisionerGuestHouse } from '../lib/action';
-
 export default function KuisionerForm({
   session,
   booking,
@@ -41,6 +42,8 @@ export default function KuisionerForm({
   booking: guesthouse_transaction;
 }) {
   const [countries, setCountries] = useState<CountryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCountriesData = async () => {
@@ -62,15 +65,33 @@ export default function KuisionerForm({
     }
   };
 
-  async function clientAction(formData: FormData) {
-    const result = await kuisionerGuestHouse(formData);
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
 
-    if (result?.success) {
-      toast.success('Thank you! Your booking request has been submitted successfully.');
-      // redirect('/');
-    } else {
-      console.log(result?.error);
-      toast.error('Oops! Something went wrong during the process');
+    const formData = new FormData(event.currentTarget);
+    const baseUrl = getBaseUrl();
+
+    try {
+      const response = await axios.post(`${baseUrl}/api/kuisioner`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        toast.success('Kuisioner added successfully.');
+        router.refresh();
+      }
+    } catch (error) {
+      console.error(error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error || 'Failed to create Guesthouse');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -88,7 +109,7 @@ export default function KuisionerForm({
           <DialogTitle>Add Kuisioner</DialogTitle>
           <DialogDescription>Fill the form below to add a new kuisioner</DialogDescription>
         </DialogHeader>
-        <form action={clientAction}>
+        <form onSubmit={handleSubmit}>
           <input
             type="hidden"
             name="guesthouse_id"

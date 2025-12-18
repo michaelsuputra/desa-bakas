@@ -18,7 +18,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { getUniqueBooking, getUniqueCountry } from '../lib/kuisioner';
 import { PageProps } from '../page';
 import SelectBooking from './select-booking';
 import SelectCountry from './select-country';
@@ -37,6 +36,8 @@ export default async function DataTable({ searchParams }: PageProps) {
   let data: KuisionerData[] = [];
   let guesthousesList: guesthouse[] = [];
   let totalCount = 0;
+  let uniqueBooking: string[] = [];
+  let uniqueCountry: string[] = [];
 
   try {
     const baseUrl = getBaseUrl();
@@ -75,10 +76,33 @@ export default async function DataTable({ searchParams }: PageProps) {
     console.error('Failed to fetch guesthouses via API:', error);
   }
 
-  const [uniqueBooking, uniqueCountry] = await Promise.all([
-    getUniqueBooking(),
-    getUniqueCountry(),
-  ]);
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/unique-booking`, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    uniqueBooking = response.data.data;
+  } catch (error) {
+    console.error('Failed to fetch unique booking via API:', error);
+  }
+
+  try {
+    const baseUrl = getBaseUrl();
+
+    const response = await axios.get(`${baseUrl}/api/unique-country`, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+
+    uniqueCountry = response.data.data;
+  } catch (error) {
+    console.error('Failed to fetch unique country via API:', error);
+  }
 
   return (
     <div className="space-y-4">

@@ -3,8 +3,11 @@
 import { useState } from 'react';
 
 import { Session } from 'next-auth';
+import { useRouter } from 'next/navigation';
 
+import { getBaseUrl } from '@/lib/utils';
 import { guesthouse_transaction } from '@prisma/client';
+import axios from 'axios';
 import { Camera, ChevronDown, ChevronUp, MessageSquarePlus, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -16,8 +19,6 @@ import { Label } from '@/components/ui/label';
 import { Rating, RatingButton } from '@/components/ui/shadcn-io/rating';
 import { Textarea } from '@/components/ui/textarea';
 
-import { reviewGuestHouse } from '../lib/action';
-
 export default function ReviewForm({
   session,
   booking,
@@ -27,6 +28,8 @@ export default function ReviewForm({
 }) {
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [ratingValue, setRatingValue] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleUploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -40,20 +43,38 @@ export default function ReviewForm({
     }
   };
 
-  async function clientActionReview(formData: FormData) {
-    const result = await reviewGuestHouse(formData);
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
 
-    if (result?.success) {
-      toast.success('Your review has been submitted successfully.');
-      // redirect('/');
-    } else {
-      console.log(result?.error);
-      toast.error('Oops! Something went wrong during the process');
+    const formData = new FormData(event.currentTarget);
+    const baseUrl = getBaseUrl();
+
+    try {
+      const response = await axios.post(`${baseUrl}/api/review`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        toast.success('Review added successfully anjayani');
+        router.refresh();
+      }
+    } catch (error) {
+      console.error(error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error || 'Failed to create Guesthouse');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
-    <form action={clientActionReview}>
+    <form onSubmit={handleSubmit}>
       <input
         type="hidden"
         name="user_id"

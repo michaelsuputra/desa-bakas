@@ -3,8 +3,12 @@ import React from 'react';
 import Link from 'next/link';
 
 import { auth, signIn, signOut } from '@/auth';
+import { getBaseUrl } from '@/lib/utils';
+import axios from 'axios';
+import { toast } from 'sonner';
 
 import { Button, buttonVariants } from '../ui/button';
+import LogoutUser from './logout-user';
 
 export default async function AuthButton() {
   // 1. Ambil session di Server Component
@@ -32,17 +36,7 @@ export default async function AuthButton() {
         <p className="text-sm font-medium">{session.user.email}</p>
 
         {/* Tombol Logout */}
-        <form
-          action={async () => {
-            'use server';
-            await signOut();
-          }}>
-          <Button
-            variant="destructive"
-            type="submit">
-            Logout
-          </Button>
-        </form>
+        <LogoutUser />
       </div>
     );
   }

@@ -1,9 +1,12 @@
 'use client';
 
+import { useState } from 'react';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { cn } from '@/lib/utils';
+import { cn, getBaseUrl } from '@/lib/utils';
+import axios from 'axios';
 import { toast } from 'sonner';
 
 import MyButton from '@/components/custom/my-button';
@@ -17,21 +20,44 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 
-import { signUpUser } from '../lib/actions';
+// import { signUpUser } from '../lib/actions';
 
 export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  async function clientAction(formData: FormData) {
-    const result = await signUpUser(formData);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
 
-    if (result?.success) {
-      toast.success("You've successfully signed up! Please sign in.");
-      router.push('/signin');
-    } else {
-      toast.error('Oops! Something went wrong during the process');
+    const formData = new FormData(e.currentTarget);
+    const baseUrl = getBaseUrl();
+
+    try {
+      const response = await axios.post(`${baseUrl}/api/register`, formData);
+
+      if (response.data.success) {
+        toast.success(response?.data?.message);
+        router.push('/signin');
+      }
+    } catch (error: any) {
+      console.log(error?.response?.data);
+      toast.error(error?.response?.data?.message || 'Terjadi kesalahan pada server');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  // async function clientAction(formData: FormData) {
+  //   const result = await signUpUser(formData);
+
+  //   if (result?.success) {
+  //     toast.success("You've successfully signed up! Please sign in.");
+  //     router.push('/signin');
+  //   } else {
+  //     toast.error('Oops! Something went wrong during the process');
+  //   }
+  // }
 
   return (
     <div
@@ -40,7 +66,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form
-            action={clientAction}
+            onSubmit={handleSubmit}
             className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">

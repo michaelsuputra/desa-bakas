@@ -19,6 +19,8 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
+import LogoutUser from './custom/logout-user';
+
 export function NavUser({ user }: { user: User | null | undefined }) {
   const { isMobile } = useSidebar();
 
@@ -52,8 +54,7 @@ export function NavUser({ user }: { user: User | null | undefined }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <LogOut />
-              Log out
+              <LogoutUser />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -6,7 +6,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 import { format } from 'date-fns';
-import { CalendarDays, CheckCircle2, MapPin, Moon, Star } from 'lucide-react';
+import { AlertCircle, CalendarDays, CheckCircle2, MapPin, Moon, Star } from 'lucide-react';
 
 import AuthButton from '@/components/custom/auth-button';
 import Navbar from '@/components/custom/navbar';
@@ -180,7 +180,13 @@ export default async function BookingHistoryPage() {
 
                 <CardFooter className="bg-muted/10 flex flex-col items-end gap-8 border-t px-6 py-4">
                   <div className="flex gap-2">
-                    {booking.status === 'pending' && (
+                    {booking.status === 'pending' && !existingKuisioner && (
+                      <div className="flex items-center gap-2 rounded-md border border-yellow-200 bg-yellow-50 px-3 py-2 text-xs font-medium text-yellow-800">
+                        <AlertCircle size={14} />
+                        Please fill the questionnaire to enable payment
+                      </div>
+                    )}
+                    {booking.status === 'pending' && existingKuisioner && (
                       <Link
                         className={buttonVariants({ variant: 'default', size: 'sm' })}
                         href={booking.invoice_url || ''}
