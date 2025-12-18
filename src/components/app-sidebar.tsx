@@ -76,13 +76,6 @@ const data = {
       icon: User,
     },
   ],
-  navSecondary: [
-    {
-      title: 'User Guesthouse',
-      url: '/',
-      icon: House,
-    },
-  ],
 };
 
 export function AppSidebar({
@@ -115,7 +108,7 @@ export function AppSidebar({
       <SidebarContent>
         <NavOverview projects={data.overview} />
         <NavManagement projects={data.management} />
-        <NavSecondary items={data.navSecondary} />
+        {/* <NavSecondary items={data.navSecondary} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={session?.user} />
