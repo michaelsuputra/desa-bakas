@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+enum status_order {
+  pending
+  success
+  failed
+}
+
+enum NewsCategory {
+  NEWS
+  EVENT
+}
+
 model Account {
   id                String  @id @default(cuid())
   user_id           String  @map("user_id")
@@ -101,11 +113,6 @@ model guesthouse_transaction {
   kuisioner_guesthouse kuisioner_guesthouse?
 }
 
-enum status_order {
-  pending
-  success
-  failed
-}
 
 model review_guesthouse {
   review_id    String  @id @default(cuid())
@@ -120,4 +127,18 @@ model review_guesthouse {
   guesthouse             guesthouse?             @relation(fields: [guesthouse_id], references: [guesthouse_id])
   user                   user?                   @relation(fields: [user_id], references: [user_id])
   guesthouse_transaction guesthouse_transaction? @relation(fields: [guesthouse_transaction_id], references: [guesthouse_transaction_id])
+}
+
+model news_event {
+  id            String       @id @default(cuid())
+  title         String
+  category      NewsCategory @default(NEWS)
+  content       String       @db.Text // @db.Text agar bisa menampung artikel panjang (Rich Text)
+  image_url     String[]     // Gambar utama/thumbnail
+  // Properti khusus Event
+  location      String?      // Lokasi acara (jika category = EVENT)
+  event_date    DateTime?    // Tanggal pelaksanaan acara (jika category = EVENT)
+  
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
 }

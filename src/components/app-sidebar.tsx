@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Session } from 'next-auth';
 
 import {
+  Book,
   CalendarCheck,
   House,
   HouseHeart,
@@ -62,6 +63,11 @@ const data = {
       name: 'Guesthouse',
       url: '/guesthouse',
       icon: HouseHeart,
+    },
+    {
+      name: 'News Event',
+      url: '/news-event',
+      icon: Book,
     },
   ],
   navSecondary: [
