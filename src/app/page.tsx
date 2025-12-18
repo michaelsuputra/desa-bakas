@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
+import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { getBaseUrl } from '@/lib/utils';
 import { guesthouse } from '@prisma/client';
@@ -12,6 +14,12 @@ import Navbar from '@/components/custom/navbar';
 import { Input } from '@/components/ui/input';
 
 export default async function Home() {
+  const session = await auth();
+
+  if (session?.user.role === 'admin') {
+    redirect('/dashboard');
+  }
+
   let data: guesthouse[] = [];
 
   try {

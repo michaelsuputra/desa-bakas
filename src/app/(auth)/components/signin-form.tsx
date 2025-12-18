@@ -20,8 +20,6 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 
-// import { signInUser } from '../lib/actions';
-
 export function SigninForm({ className, ...props }: React.ComponentProps<'div'>) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -38,6 +36,9 @@ export function SigninForm({ className, ...props }: React.ComponentProps<'div'>)
 
       if (response.data.success) {
         toast.success(response?.data?.message);
+
+        router.refresh();
+
         router.push('/');
       }
     } catch (error) {
