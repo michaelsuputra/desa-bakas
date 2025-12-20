@@ -4,14 +4,7 @@ import * as React from 'react';
 
 import { Session } from 'next-auth';
 
-import {
-  House,
-  HouseHeart,
-  Languages,
-  PieChart,
-  Star,
-  TreePine,
-} from 'lucide-react';
+import { House, HouseHeart, Languages, PieChart, Star, TreePine } from 'lucide-react';
 
 import { NavProjects } from '@/components/nav-project';
 import { NavUser } from '@/components/nav-user';
@@ -40,26 +33,19 @@ const data = {
       icon: PieChart,
     },
     {
-      name: 'Kuisioner',
-      url: '/kuisioner',
-      icon: Languages,
-    },
-    {
       name: 'Guesthouse',
       url: '/guesthouse',
       icon: HouseHeart,
     },
     {
+      name: 'Kuisioner',
+      url: '/kuisioner',
+      icon: Languages,
+    },
+    {
       name: 'Review',
       url: '/review',
       icon: Star,
-    },
-  ],
-  navSecondary: [
-    {
-      title: 'User Guesthouse',
-      url: '/',
-      icon: House,
     },
   ],
 };
@@ -93,7 +79,7 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} />
+        {/* <NavSecondary items={data.navSecondary} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={session?.user} />

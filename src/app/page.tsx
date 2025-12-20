@@ -11,11 +11,16 @@ import { Input } from '@/components/ui/input';
 
 export default async function Home() {
   const session = await auth();
-  const data = await prisma.guesthouse.findMany();
 
   if (!session) {
     return redirect('/signin');
   }
+
+  if (session.user.role === 'ADMIN') {
+    return redirect('/dashboard');
+  }
+
+  const data = await prisma.guesthouse.findMany();
 
   return (
     <div className="min-h-screen bg-white">

@@ -44,12 +44,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.fullname = user.fullname;
+        token.role = user.role;
       }
       return token;
     },
     session({ session, token }) {
       session.user.id = token.sub;
       session.user.fullname = token.fullname;
+      session.user.role = token.role;
       return session;
     },
   },

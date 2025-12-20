@@ -5,7 +5,7 @@ export const guestHouses = [
     propertyLocation:
       'Jalan Subak Bungah No.4, Bakas, Kec. Banjarangkan, Kabupaten Klungkung, Bali 80752',
     location:
-      'Located in Klungkung, 14 km from Goa Gajah and 15 km from Tegenungan Waterfall. Arsa Wayan Guest House offers accommodation with a garden, terrace, and free WiFi throughout the property. This accommodation is approximately 18 km from Monkey Forest Ubud, 19 km from Ubud Palace, and 19 km from Saraswati Temple. Tegallalang Rice Terrace is 26 km away, and Bali Museum is 29 km from the guest house. Located in Klungkung, 14 km from Goa Gajah and 15 km from Tegenungan Waterfall. Arsa Wayan Guest House offers accommodation with a garden, terrace, and free WiFi throughout the property. This accommodation is approximately 18 km from Monkey Forest Ubud, 19 km from Ubud Palace, and 19 km from Saraswati Temple. Tegallalang Rice Terrace is 26 km away, and Bali Museum is 29 km from the guest house.',
+      'Located in Klungkung, 14 km from Goa Gajah and 15 km from Tegenungan Waterfall. Arsa Wayan Guest House offers accommodation with a garden, terrace, and free WiFi throughout the property. This accommodation is approximately 18 km from Monkey Forest Ubud, 19 km from Ubud Palace, and 19 km from Saraswati Temple. Tegallalang Rice Terrace is 26 km away, and Bali Museum is 29 km from the guest house.',
     password: 'arsawayan123',
     facilities: [
       { icon: '❤️', label: 'Favorite choices' },
@@ -41,8 +41,7 @@ export const guestHouses = [
   {
     id: 3,
     name: 'The Grand Bakas Jungle Retreat Villa',
-    propertyLocation:
-      'Bakas Village, Banjarangkan, Kabupaten Klungkung, Bali 80752',
+    propertyLocation: 'Bakas Village, Banjarangkan, Kabupaten Klungkung, Bali 80752',
     location:
       'Located in Klungkung, 14 km from Goa Gajah and 15 km from Tegenungan Waterfall. The Grand Bakas Jungle Retreat Villa offers accommodation with a garden, terrace, swimming pool, and free WiFi throughout the property. This accommodation is approximately 18 km from Monkey Forest Ubud, 19 km from Ubud Palace, and 19 km from Saraswati Temple. Tegallalang Rice Terrace is 26 km away, and Bali Museum is 29 km from the guest house. The villa features a private swimming pool and spacious garden area, perfect for family gatherings and special events.',
     facilities: [
@@ -60,8 +59,7 @@ export const guestHouses = [
   {
     id: 4,
     name: 'Teba Bakas Guest House',
-    propertyLocation:
-      'Bakas Village, Banjarangkan, Kabupaten Klungkung, Bali 80752',
+    propertyLocation: 'Bakas Village, Banjarangkan, Kabupaten Klungkung, Bali 80752',
     location:
       'Located in Klungkung, 14 km from Goa Gajah and 15 km from Tegenungan Waterfall. Teba Bakas Guest House offers accommodation with a garden, terrace, and free WiFi throughout the property. This accommodation is approximately 18 km from Monkey Forest Ubud, 19 km from Ubud Palace, and 19 km from Saraswati Temple. Tegallalang Rice Terrace is 26 km away, and Bali Museum is 29 km from the guest house. Teba Bakas Guest House features modern amenities while maintaining traditional Balinese charm and hospitality.',
     facilities: [
@@ -79,8 +77,7 @@ export const guestHouses = [
   {
     id: 5,
     name: 'Wayan Nada Homestay',
-    propertyLocation:
-      'Bakas Village, Banjarangkan, Kabupaten Klungkung, Bali 80752',
+    propertyLocation: 'Bakas Village, Banjarangkan, Kabupaten Klungkung, Bali 80752',
     location:
       'Located in Klungkung, 14 km from Goa Gajah and 15 km from Tegenungan Waterfall. Wayan Nada Homestay offers accommodation with a garden, terrace, and free WiFi throughout the property. This accommodation is approximately 18 km from Monkey Forest Ubud, 19 km from Ubud Palace, and 19 km from Saraswati Temple. Tegallalang Rice Terrace is 26 km away, and Bali Museum is 29 km from the guest house. Experience authentic Balinese hospitality in a cozy and welcoming environment at Wayan Nada Homestay.',
     facilities: [

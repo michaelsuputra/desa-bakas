@@ -21,6 +21,10 @@ export default async function Page({ children }: { children: React.ReactNode }) 
     return redirect('/signin');
   }
 
+  if (session.user.role !== 'ADMIN') {
+    return redirect('/');
+  }
+
   return (
     <SidebarProvider suppressHydrationWarning>
       <AppSidebar session={session} />
