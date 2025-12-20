@@ -16,6 +16,7 @@ import {
 
 import { getGuesthouse } from '../lib/guesthouse';
 import { PageProps } from '../page';
+import DeleteData from './delete-data';
 import { EditData } from './edit-data';
 
 export default async function DataTable({ searchParams }: PageProps) {
@@ -83,7 +84,10 @@ export default async function DataTable({ searchParams }: PageProps) {
                   </ImageZoom>
                 </TableCell>
                 <TableCell>
-                  <EditData data={guesthouse} />
+                  <div className="flex gap-2">
+                    <EditData data={guesthouse} />
+                    <DeleteData id={guesthouse.guesthouse_id} />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

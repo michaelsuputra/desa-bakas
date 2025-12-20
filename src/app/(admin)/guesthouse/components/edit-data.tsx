@@ -1,5 +1,10 @@
+'use client';
+
+import { useActionState, useEffect, useState } from 'react';
+
 import { guesthouse } from '@prisma/client';
 import { Edit } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,18 +20,50 @@ import {
 import { InputGroup, InputGroupInput, InputGroupTextarea } from '@/components/ui/input-group';
 import { Label } from '@/components/ui/label';
 
+import { updateGuestHouse } from '../lib/actions';
+
+const initialState = {
+  success: false,
+  message: '',
+};
+
 export function EditData({ data }: { data: guesthouse }) {
+  const [open, setOpen] = useState(false);
+  const [state, formAction, isPending] = useActionState(updateGuestHouse, initialState);
+
+  useEffect(() => {
+    if (state.success) {
+      toast.success('Guesthouse Updated', {
+        description: 'The guesthouse data has been successfully updated.',
+      });
+      setOpen(false); // Tutup dialog jika sukses
+    } else if (state.error?.message) {
+      toast.error('Update Failed', {
+        description: state.error.message,
+      });
+    }
+  }, [state]);
+
   return (
-    <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Edit size={18} />
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Guesthouse</DialogTitle>
-            <DialogDescription>Click save when you&apos;re done.</DialogDescription>
-          </DialogHeader>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Edit size={18} />
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Edit Guesthouse</DialogTitle>
+          <DialogDescription>Click save when you&apos;re done.</DialogDescription>
+        </DialogHeader>
+
+        <form action={formAction}>
+          <input
+            type="hidden"
+            name="guesthouse_id"
+            value={data.guesthouse_id}
+          />
+
           <div className="grid gap-4">
             <div className="flex w-full flex-col gap-2">
               <Label htmlFor="guesthouse_name">Guesthouse Name</Label>
@@ -96,23 +133,27 @@ export function EditData({ data }: { data: guesthouse }) {
                 <InputGroupInput
                   id="guesthouse_images"
                   name="guesthouse_images"
-                  placeholder="Kubu Bakas"
                   type="file"
                   accept="image/*"
                   multiple
-                  required
                 />
               </InputGroup>
+              {data.guesthouse_images.length > 0 && (
+                <p className="text-muted-foreground text-xs">
+                  Current: {data.guesthouse_images.length} images
+                </p>
+              )}
             </div>
           </div>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="submit">Save changes</Button>
+            <Button
+              type="submit"
+              disabled={isPending}>
+              Save changes
+            </Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }
