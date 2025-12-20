@@ -16,6 +16,7 @@ import {
 
 import { getGuesthouse } from '../lib/guesthouse';
 import { PageProps } from '../page';
+import { EditData } from './edit-data';
 
 export default async function DataTable({ searchParams }: PageProps) {
   const { search, page } = await searchParams;
@@ -80,6 +81,9 @@ export default async function DataTable({ searchParams }: PageProps) {
                       />
                     </div>
                   </ImageZoom>
+                </TableCell>
+                <TableCell>
+                  <EditData data={guesthouse} />
                 </TableCell>
               </TableRow>
             ))}
