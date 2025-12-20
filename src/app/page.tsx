@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
+import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { ArrowDown } from 'lucide-react';
 
@@ -8,7 +10,12 @@ import Navbar from '@/components/custom/navbar';
 import { Input } from '@/components/ui/input';
 
 export default async function Home() {
+  const session = await auth();
   const data = await prisma.guesthouse.findMany();
+
+  if (!session) {
+    return redirect('/signin');
+  }
 
   return (
     <div className="min-h-screen bg-white">

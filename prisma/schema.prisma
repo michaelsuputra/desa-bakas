@@ -26,12 +26,18 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+enum Role {
+  ADMIN
+  WISATAWAN
+}
+
 model user {
   user_id    String   @id @default(cuid())
   fullname   String?
   email      String?  @unique
   password   String?
   created_at DateTime @default(now())
+  role       Role     @default(WISATAWAN)
 
   accounts Account[]
 }

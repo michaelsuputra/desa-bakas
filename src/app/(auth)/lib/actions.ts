@@ -47,7 +47,7 @@ export async function signInUser(formData: FormData) {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    await signIn('credentials', { email, password, redirectTo: '/dashboard' });
+    await signIn('credentials', { email, password, redirectTo: '/' });
 
     return { success: true };
   } catch (error) {
