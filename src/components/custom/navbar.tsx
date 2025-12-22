@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
+import { handleSignOut } from '@/app/(auth)/lib/actions';
+import { LogOut } from 'lucide-react';
+
+import { Button } from '../ui/button';
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -24,7 +29,20 @@ export default function Navbar() {
           Bakas
         </Link>
 
-        <div className="cursor-pointer text-sm text-white hover:opacity-70">Guest House</div>
+        <div className="flex items-center gap-4">
+          <div className="cursor-pointer text-sm text-white hover:opacity-70">Guest House</div>
+
+          <form
+            action={handleSignOut}
+            className="">
+            <Button
+              type="submit"
+              className="flex cursor-pointer items-center gap-2">
+              <LogOut className="size-4" />
+              Log out
+            </Button>
+          </form>
+        </div>
       </div>
     </nav>
   );

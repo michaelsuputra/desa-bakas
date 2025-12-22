@@ -2,9 +2,9 @@
 
 import { User } from 'next-auth';
 
+import { handleSignOut } from '@/app/(auth)/lib/actions';
 import { ChevronsUpDown, LogOut } from 'lucide-react';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,8 +53,16 @@ export function NavUser({ user }: { user: User | null | undefined }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <LogOut />
-              Log out
+              <form
+                action={handleSignOut}
+                className="w-full">
+                <button
+                  type="submit"
+                  className="flex w-full cursor-pointer items-center gap-2">
+                  <LogOut className="size-4" />
+                  Log out
+                </button>
+              </form>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

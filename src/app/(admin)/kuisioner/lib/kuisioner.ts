@@ -40,8 +40,6 @@ export async function getKuisioner(
 
   const [data, totalCount] = await Promise.all([
     prisma.kuisioner_guesthouse.findMany({
-      take: pageSize,
-      skip,
       where,
       include: {
         guesthouse: true,

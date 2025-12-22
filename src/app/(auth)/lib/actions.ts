@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { hashSync } from 'bcrypt-ts';
 
-import { signIn } from '../../../auth';
+import { signIn, signOut } from '../../../auth';
 
 export async function signUpUser(formData: FormData) {
   try {
@@ -63,4 +63,8 @@ export async function signInUser(formData: FormData) {
 
     throw error;
   }
+}
+
+export async function handleSignOut() {
+  await signOut({ redirectTo: '/signin' }); // Redirect ke halaman login setelah logout
 }

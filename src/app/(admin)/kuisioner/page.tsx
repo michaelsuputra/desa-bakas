@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Button } from '@/components/ui/button';
+
 import DataTable from './components/table';
 
 export type PageProps = {
@@ -21,6 +23,8 @@ export default async function Page({ searchParams }: PageProps) {
       </header>
 
       <hr />
+
+      <Button>Export Excel</Button>
 
       <DataTable searchParams={searchParams} />
     </section>
