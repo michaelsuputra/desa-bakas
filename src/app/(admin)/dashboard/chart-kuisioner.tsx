@@ -19,7 +19,7 @@ import {
 
 const chartConfig = {
   total: {
-    label: 'Total Pesanan',
+    label: 'Total Pesanan ',
     color: 'var(--chart-1)',
   },
 } satisfies ChartConfig;

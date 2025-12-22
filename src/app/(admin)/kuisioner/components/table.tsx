@@ -22,12 +22,15 @@ import {
   getUniqueCountry,
 } from '../lib/kuisioner';
 import { PageProps } from '../page';
+import ExportButton from './export-button';
 import SelectBooking from './select-booking';
 import SelectCountry from './select-country';
 import SelectGuesthouse from './select-guesthouse';
 
 export default async function DataTable({ searchParams }: PageProps) {
   const { search, page, booking, country, guesthouse } = await searchParams;
+
+  const filters = { search, booking, country, guesthouse };
 
   const { data, totalCount } = await getKuisioner(
     Number(page) || 1,
@@ -66,6 +69,10 @@ export default async function DataTable({ searchParams }: PageProps) {
           countries={uniqueCountry}
           currentCountry={country}
         />
+
+        <div className="ml-auto">
+          <ExportButton filters={filters} />
+        </div>
       </div>
 
       <ScrollArea className="w-full whitespace-nowrap">

@@ -103,3 +103,46 @@ export async function getUniqueCountry() {
     .filter((b): b is string => b !== null)
     .sort();
 }
+
+export async function getAllKuisioner(
+  searchQuery?: string,
+  bookingQuery?: string,
+  countryQuery?: string,
+  guesthouseQuery?: string
+) {
+  const where: Prisma.kuisioner_guesthouseWhereInput = {};
+
+  if (searchQuery) {
+    where.OR = [
+      { fullname: { contains: searchQuery, mode: 'insensitive' } },
+      {
+        guesthouse: {
+          guesthouse_name: { contains: searchQuery, mode: 'insensitive' },
+        },
+      },
+    ];
+  }
+
+  if (bookingQuery) {
+    where.booking_at = { contains: bookingQuery, mode: 'insensitive' };
+  }
+
+  if (countryQuery) {
+    where.country = { contains: countryQuery, mode: 'insensitive' };
+  }
+
+  if (guesthouseQuery) {
+    where.guesthouse = {
+      guesthouse_name: { equals: guesthouseQuery, mode: 'insensitive' },
+    };
+  }
+
+  const data = await prisma.kuisioner_guesthouse.findMany({
+    where,
+    include: {
+      guesthouse: true,
+    },
+  });
+
+  return data;
+}

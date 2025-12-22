@@ -25,7 +25,7 @@ export default async function Page() {
     by: ['country'],
     _count: { country: true },
     orderBy: { _count: { country: 'desc' } },
-    take: 5,
+    // take: 5,
   });
 
   const chartColors = [
