@@ -6,10 +6,15 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { ArrowDown } from 'lucide-react';
 
+import GuesthouseSearch from '@/components/custom/guesthouse-search';
 import Navbar from '@/components/custom/navbar';
 import { Input } from '@/components/ui/input';
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ query?: string }>;
+}) {
   const session = await auth();
 
   if (!session) {
@@ -20,7 +25,26 @@ export default async function Home() {
     return redirect('/dashboard');
   }
 
-  const data = await prisma.guesthouse.findMany();
+  const query = (await searchParams).query || '';
+
+  const data = await prisma.guesthouse.findMany({
+    where: {
+      OR: [
+        {
+          guesthouse_name: {
+            contains: query,
+            mode: 'insensitive', // Tidak peka huruf besar/kecil
+          },
+        },
+        {
+          guesthouse_location: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
+      ],
+    },
+  });
 
   return (
     <div className="min-h-screen bg-white">
@@ -58,40 +82,40 @@ export default async function Home() {
             Available Guest House
           </h2>
 
-          <Input
-            type="text"
-            placeholder="search location"
-            // value={searchQuery}
-            // onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg px-4 py-3 md:w-80"
-          />
+          <GuesthouseSearch placeholder="Search name or location..." />
         </div>
 
         {/* ✅ GRID */}
         <div className="grid gap-12 md:grid-cols-2">
-          {data.map((house) => (
-            <Link
-              href={`/guesthouse/${house.guesthouse_id}`}
-              key={house.guesthouse_id}
-              className="cursor-pointer overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg transition-all hover:shadow-2xl">
-              <div className="h-72 overflow-hidden">
-                <Image
-                  src={house.guesthouse_images[0]}
-                  alt={house.guesthouse_name}
-                  width={600}
-                  height={400}
-                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                />
-              </div>
+          {data.length > 0 ? (
+            data.map((house) => (
+              <Link
+                href={`/guesthouse/${house.guesthouse_id}`}
+                key={house.guesthouse_id}
+                className="cursor-pointer overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg transition-all hover:shadow-2xl">
+                <div className="h-72 overflow-hidden">
+                  <Image
+                    src={house.guesthouse_images[0]}
+                    alt={house.guesthouse_name}
+                    width={600}
+                    height={400}
+                    className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
 
-              <div className="p-8">
-                <h3 className="mb-3 text-xl font-semibold">{house.guesthouse_name}</h3>
-                <p className="text-card-foreground line-clamp-4 text-sm leading-relaxed">
-                  {house.guesthouse_location}
-                </p>
-              </div>
-            </Link>
-          ))}
+                <div className="p-8">
+                  <h3 className="mb-3 text-xl font-semibold">{house.guesthouse_name}</h3>
+                  <p className="text-card-foreground line-clamp-4 text-sm leading-relaxed">
+                    {house.guesthouse_location}
+                  </p>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <div className="col-span-2 py-10 text-center text-gray-500">
+              No guest houses found matching "{query}"
+            </div>
+          )}
         </div>
       </main>
     </div>
